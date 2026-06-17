@@ -8,11 +8,20 @@ namespace MarkStickyNotes
         [STAThread]
         static void Main()
         {
+            using var mutex =
+                new Mutex(true, "MarkStickyNotes", out bool created);
+
+            if (!created)
+            {
+                MessageBox.Show("MarkStickyNotesは既に起動しています。通知領域を確認してください。", "MarkStickyNotes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             MarkdownGenerator.Init();
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new ListForm());
+            Application.Run(new TrayApplicationContext());
         }
     }
 }
