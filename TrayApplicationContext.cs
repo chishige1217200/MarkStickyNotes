@@ -7,7 +7,7 @@ namespace MarkStickyNotes
     public class TrayApplicationContext : ApplicationContext
     {
         private readonly NotifyIcon _notifyIcon;
-        private SettingsForm? _settingsForm;
+        private ListForm? _listForm;
 
         public TrayApplicationContext()
         {
@@ -38,23 +38,23 @@ namespace MarkStickyNotes
 
         private void ShowSettings()
         {
-            if (_settingsForm == null || _settingsForm.IsDisposed)
+            if (_listForm == null || _listForm.IsDisposed)
             {
-                _settingsForm = new SettingsForm();
+                _listForm = new ListForm();
 
-                _settingsForm.FormClosed += (_, _) =>
+                _listForm.FormClosed += (_, _) =>
                 {
-                    _settingsForm = null;
+                    _listForm = null;
                 };
             }
 
-            if (!_settingsForm.Visible)
+            if (!_listForm.Visible)
             {
-                _settingsForm.Show();
+                _listForm.Show();
             }
 
-            _settingsForm.WindowState = FormWindowState.Normal;
-            _settingsForm.Activate();
+            _listForm.WindowState = FormWindowState.Normal;
+            _listForm.Activate();
         }
 
         private void ExitApplication()
@@ -62,7 +62,7 @@ namespace MarkStickyNotes
             _notifyIcon.Visible = false;
             _notifyIcon.Dispose();
 
-            _settingsForm?.Close();
+            _listForm?.Close();
 
             ExitThread();
         }

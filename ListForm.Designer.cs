@@ -28,18 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
+            categoriesListBox = new CheckedListBox();
             SuspendLayout();
+            // 
+            // categoriesListBox
+            // 
+            categoriesListBox.FormattingEnabled = true;
+            categoriesListBox.Location = new Point(12, 12);
+            categoriesListBox.Name = "categoriesListBox";
+            categoriesListBox.Size = new Size(120, 94);
+            categoriesListBox.TabIndex = 0;
             // 
             // ListForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(categoriesListBox);
             Name = "ListForm";
             Text = "MarkStickyNotes";
             ResumeLayout(false);
         }
 
         #endregion
+
+        private CheckedListBox categoriesListBox;
     }
 }
