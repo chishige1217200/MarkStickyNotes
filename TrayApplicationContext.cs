@@ -25,7 +25,7 @@ namespace MarkStickyNotes
 
             _notifyIcon = new NotifyIcon
             {
-                Icon = SystemIcons.Application,
+                Icon = Properties.Resources.MarkStickyNotes,
                 Text = "SuperStickyNotes",
                 ContextMenuStrip = menu,
                 Visible = true

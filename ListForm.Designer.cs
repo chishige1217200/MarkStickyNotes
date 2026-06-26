@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ListForm));
             categoriesListBox = new CheckedListBox();
             SuspendLayout();
             // 
@@ -45,6 +46,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(categoriesListBox);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "ListForm";
             Text = "MarkStickyNotes";
             ResumeLayout(false);
