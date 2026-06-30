@@ -9,9 +9,9 @@ namespace MarkStickyNotes
 
         public void setCategories()
         {
-            var categories = ContentManager.GetCategories();
+            //var categories = ContentManager.GetCategories();
             this.categoriesListBox.Items.Clear();
-            this.categoriesListBox.Items.AddRange(categories);
+            //this.categoriesListBox.Items.AddRange(categories);
         }
     }
 }
