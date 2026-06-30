@@ -1,3 +1,6 @@
+using MarkStickyNotes.DbContexts;
+using Microsoft.EntityFrameworkCore;
+
 namespace MarkStickyNotes
 {
     internal static class Program
@@ -16,6 +19,9 @@ namespace MarkStickyNotes
                 MessageBox.Show("MarkStickyNotesは既に起動しています。通知領域を確認してください。", "MarkStickyNotes", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
+            using var db = new AppDbContext();
+            db.Database.Migrate();
 
             // SQLitePCLの初期化
             SQLitePCL.Batteries_V2.Init();
