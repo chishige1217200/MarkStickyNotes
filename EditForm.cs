@@ -471,10 +471,48 @@ namespace MarkStickyNotes
             }
         }
 
-        // 閉じるボタンのクリックイベント
+        // 削除ボタンのクリックイベント
         private void CloseButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            // 新規作成中またはノートが存在しない場合は何もしない
+            if (currentNote == null || currentNote.Id == 0)
+            {
+                MessageBox.Show("削除できるノートがありません。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 削除確認ダイアログを表示
+            var result = MessageBox.Show(
+                $"「{currentNote.Subject}」を削除しますか？",
+                "削除確認",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Warning);
+
+            // OKが押された場合のみ削除（論理削除）
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    using var db = new AppDbContext();
+
+                    // データベースで論理削除フラグを立てる
+                    var noteToDelete = db.Notes.Find(currentNote.Id);
+                    if (noteToDelete != null)
+                    {
+                        noteToDelete.IsDeleted = true;
+                        noteToDelete.Updated = DateTime.Now;
+                        db.Notes.Update(noteToDelete);
+                        db.SaveChanges();
+                    }
+
+                    // フォームを閉じる
+                    this.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"削除中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         // タイトルの入力状態をチェックして保存ボタンの有効/無効を切り替え
