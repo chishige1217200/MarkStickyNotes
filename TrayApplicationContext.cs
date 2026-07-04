@@ -8,6 +8,7 @@ namespace MarkStickyNotes
     {
         private readonly NotifyIcon _notifyIcon;
         private ListForm? _listForm;
+        private SettingsForm? _settingsForm;
 
         public TrayApplicationContext()
         {
@@ -20,6 +21,11 @@ namespace MarkStickyNotes
 
             menu.Items.Add(
                 "付箋一覧",
+                null,
+                (_, _) => ShowList());
+
+            menu.Items.Add(
+                "アプリ設定",
                 null,
                 (_, _) => ShowSettings());
 
@@ -36,9 +42,9 @@ namespace MarkStickyNotes
                 Visible = true
             };
 
-            _notifyIcon.DoubleClick += (_, _) => ShowSettings();
+            _notifyIcon.DoubleClick += (_, _) => ShowList();
 
-            ShowSettings();
+            ShowList();
         }
 
         private void ShowNote()
@@ -48,7 +54,7 @@ namespace MarkStickyNotes
             editForm.Show();
         }
 
-        private void ShowSettings()
+        private void ShowList()
         {
             if (_listForm == null || _listForm.IsDisposed)
             {
@@ -67,6 +73,27 @@ namespace MarkStickyNotes
 
             _listForm.WindowState = FormWindowState.Normal;
             _listForm.Activate();
+        }
+
+        private void ShowSettings()
+        {
+            if (_settingsForm == null || _settingsForm.IsDisposed)
+            {
+                _settingsForm = new SettingsForm();
+
+                _settingsForm.FormClosed += (_, _) =>
+                {
+                    _settingsForm = null;
+                };
+            }
+
+            if (!_settingsForm.Visible)
+            {
+                _settingsForm.Show();
+            }
+
+            _settingsForm.WindowState = FormWindowState.Normal;
+            _settingsForm.Activate();
         }
 
         private void ExitApplication()
