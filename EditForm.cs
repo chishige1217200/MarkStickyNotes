@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -42,6 +43,16 @@ namespace MarkStickyNotes
         private async void InitializeWebView()
         {
             await webView.EnsureCoreWebView2Async(null);
+
+            // contentsフォルダを仮想ホスト名にマッピング
+            var contentsDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "contents");
+            webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                "markstickynotesapp.local",
+                contentsDirPath,
+                Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
+
+            // NavigationStartingイベントを登録（ファイルリンクを外部アプリで開く）
+            webView.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
 
             // 新規作成の場合は編集モードで起動
             if (isNewNote)
@@ -267,6 +278,26 @@ namespace MarkStickyNotes
             var markdown = markdownRichTextBox.Text;
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             var html = Markdown.ToHtml(markdown, pipeline);
+
+            // 相対パスを仮想ホスト名のURLに変換
+            // 例: "20241231_120000_files/image.png" -> "https://markstickynotesapp.local/20241231_120000_files/image.png"
+            html = System.Text.RegularExpressions.Regex.Replace(
+                html,
+                @"(src|href)=""([^""]+)""",
+                match =>
+                {
+                    var attribute = match.Groups[1].Value;
+                    var path = match.Groups[2].Value;
+
+                    // http:// または https:// で始まる場合はそのまま
+                    if (path.StartsWith("http://") || path.StartsWith("https://"))
+                    {
+                        return match.Value;
+                    }
+
+                    // 相対パスの場合は仮想ホスト名のURLに変換
+                    return $@"{attribute}=""https://markstickynotesapp.local/{path}""";
+                });
 
             // HTMLテンプレート
             var fullHtml = $@"
@@ -535,6 +566,57 @@ namespace MarkStickyNotes
                     markdownRichTextBox.SelectionStart = selectionStart + insertText.Length;
                     markdownRichTextBox.Focus();
                 }
+            }
+        }
+
+        // WebView2のナビゲーション開始イベント（ファイルリンクを外部アプリで開く）
+        private void CoreWebView2_NavigationStarting(object? sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
+        {
+            var uri = new Uri(e.Uri);
+
+            // 仮想ホスト名でない場合は通常のナビゲーション
+            if (uri.Host != "markstickynotesapp.local")
+            {
+                return;
+            }
+
+            // 画像ファイルの拡張子
+            var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
+            var extension = Path.GetExtension(uri.LocalPath).ToLower();
+
+            // 画像の場合はWebView内で表示
+            if (imageExtensions.Contains(extension))
+            {
+                return;
+            }
+
+            // 画像以外のファイルは外部アプリで開く
+            e.Cancel = true;
+
+            try
+            {
+                // 仮想ホストのパスを実際のファイルパスに変換
+                var contentsDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "contents");
+                var relativePath = uri.LocalPath.TrimStart('/');
+                var actualFilePath = Path.Combine(contentsDirPath, relativePath);
+
+                if (File.Exists(actualFilePath))
+                {
+                    // Windowsの規定のアプリでファイルを開く
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = actualFilePath,
+                        UseShellExecute = true
+                    });
+                }
+                else
+                {
+                    MessageBox.Show($"ファイルが見つかりません: {actualFilePath}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"ファイルを開けませんでした: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
