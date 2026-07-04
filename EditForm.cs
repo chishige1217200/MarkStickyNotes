@@ -3,47 +3,441 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using MarkStickyNotes.DbContexts;
+using MarkStickyNotes.Entities;
+using Markdig;
 
 namespace MarkStickyNotes
 {
     public partial class EditForm : Form
     {
+        private bool isEditMode = false;
+        private Note? currentNote = null;
+        private bool isNewNote = true; // 新規作成フラグ
+
         public EditForm()
         {
             InitializeComponent();
+            LoadComboBoxData();
+            InitializeWebView();
+
+            // タイトルの変更を監視
+            titleTextBox.TextChanged += TitleTextBox_TextChanged;
+        }
+
+        public EditForm(int noteId) : this()
+        {
+            isNewNote = false; // 既存ノートの場合
+            LoadNote(noteId);
+        }
+
+        // WebView2の初期化
+        private async void InitializeWebView()
+        {
+            await webView.EnsureCoreWebView2Async(null);
+
+            // 新規作成の場合は編集モードで起動
+            if (isNewNote)
+            {
+                CreateNewNote();
+            }
+            else
+            {
+                // 既存ノートの場合、初期化完了後にレンダリング
+                if (!isEditMode)
+                {
+                    RenderMarkdown();
+                }
+            }
+        }
+
+        // ComboBoxデータの読み込み
+        private void LoadComboBoxData()
+        {
+            using var db = new AppDbContext();
+
+            // Colors ComboBox
+            var colors = db.Colors.OrderBy(c => c.Order).ToList();
+            colorComboBox.DisplayMember = "Name";
+            colorComboBox.ValueMember = "Id";
+            colorComboBox.DataSource = colors;
+
+            // Status ComboBox
+            var statuses = db.Status.OrderBy(s => s.Order).ToList();
+            statusComboBox.DisplayMember = "Name";
+            statusComboBox.ValueMember = "Id";
+            statusComboBox.DataSource = statuses;
+
+            // デフォルトを選択
+            if (colors.Count > 0)
+            {
+                colorComboBox.SelectedIndex = 0;
+            }
+            if (statuses.Count > 0)
+            {
+                statusComboBox.SelectedIndex = 0;
+            }
+        }
+
+        // タイトルを取得・設定するプロパティ
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string Title
+        {
+            get => titleTextBox.Text;
+            set => titleTextBox.Text = value;
+        }
+
+        // Markdownテキストを取得・設定するプロパティ
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string MarkdownText
+        {
+            get => markdownRichTextBox.Text;
+            set => markdownRichTextBox.Text = value;
+        }
+
+        // 既存のノートを読み込む
+        public void LoadNote(int noteId)
+        {
+            using var db = new AppDbContext();
+            currentNote = db.Notes.Find(noteId);
+            Text += $" - id: {noteId}"; // フォームタイトルを変更
+            if (currentNote != null)
+            {
+                titleTextBox.Text = currentNote.Subject;
+
+                // ContentManagerからMarkdownを読み込む
+                if (!string.IsNullOrEmpty(currentNote.ContentFileName))
+                {
+                    markdownRichTextBox.Text = ContentManager.Load(currentNote.ContentFileName);
+                }
+
+                // Color と Status を選択
+                if (!string.IsNullOrEmpty(currentNote.ColorId) && int.TryParse(currentNote.ColorId, out int colorId))
+                {
+                    colorComboBox.SelectedValue = colorId;
+                    // 背景色を適用
+                    var color = db.Colors.Find(colorId);
+                    if (color != null)
+                    {
+                        try
+                        {
+                            this.BackColor = ColorTranslator.FromHtml(color.ColorCode);
+                        }
+                        catch { }
+                    }
+                }
+                if (!string.IsNullOrEmpty(currentNote.StatusId) && int.TryParse(currentNote.StatusId, out int statusId))
+                {
+                    statusComboBox.SelectedValue = statusId;
+                }
+
+                // 開始日と期限日を設定
+                if (currentNote.StartDate.HasValue)
+                {
+                    startDatePicker.Checked = true;
+                    startDatePicker.Value = currentNote.StartDate.Value;
+                }
+                else
+                {
+                    startDatePicker.Checked = false;
+                }
+
+                if (currentNote.DueDate.HasValue)
+                {
+                    dueDatePicker.Checked = true;
+                    dueDatePicker.Value = currentNote.DueDate.Value;
+                }
+                else
+                {
+                    dueDatePicker.Checked = false;
+                }
+
+                SetViewMode(false); // 閲覧モードで表示
+            }
+        }
+
+        // 新規ノートを作成
+        public void CreateNewNote()
+        {
+            currentNote = new Note
+            {
+                Subject = "",
+                ContentFileName = "",
+                ColorId = colorComboBox.SelectedValue?.ToString() ?? "1",
+                StatusId = statusComboBox.SelectedValue?.ToString() ?? "1",
+                Created = DateTime.Now,
+                Updated = DateTime.Now
+            };
+
+            titleTextBox.Text = "";
+            markdownRichTextBox.Text = "";
+
+            // 日付ピッカーをリセット
+            startDatePicker.Checked = false;
+            dueDatePicker.Checked = false;
+
+            // 背景色を適用
+            if (colorComboBox.SelectedItem is Entities.Color selectedColor)
+            {
+                try
+                {
+                    this.BackColor = ColorTranslator.FromHtml(selectedColor.ColorCode);
+                }
+                catch { }
+            }
+
+            SetViewMode(true); // 編集モードで開始
+        }
+
+        // 編集/閲覧モードの切り替え
+        private void EditButton_Click(object sender, EventArgs e)
+        {
+            if (isEditMode)
+            {
+                // 編集モードから閲覧モードへ(保存)
+                SaveNote();
+                SetViewMode(false);
+            }
+            else
+            {
+                // 閲覧モードから編集モードへ
+                SetViewMode(true);
+            }
+        }
+
+        // モードの設定
+        private void SetViewMode(bool editMode)
+        {
+            isEditMode = editMode;
+
+            if (editMode)
+            {
+                // 編集モード
+                editButton.Text = "保存";
+                titleTextBox.ReadOnly = false;
+                markdownRichTextBox.Visible = true;
+                webView.Visible = false;
+
+                // コントロールを有効化
+                colorComboBox.Enabled = true;
+                statusComboBox.Enabled = true;
+                startDatePicker.Enabled = true;
+                dueDatePicker.Enabled = true;
+
+                // タイトルの入力状態をチェック
+                UpdateSaveButtonState();
+            }
+            else
+            {
+                // 閲覧モード
+                editButton.Text = "編集";
+                titleTextBox.ReadOnly = true;
+                markdownRichTextBox.Visible = false;
+                webView.Visible = true;
+
+                // コントロールを無効化
+                colorComboBox.Enabled = false;
+                statusComboBox.Enabled = false;
+                startDatePicker.Enabled = false;
+                dueDatePicker.Enabled = false;
+
+                // MarkdownをHTMLに変換してWebViewに表示
+                RenderMarkdown();
+            }
+        }
+
+        // Markdownを表示
+        private void RenderMarkdown()
+        {
+            // WebView2が初期化されていない場合は処理をスキップ
+            if (webView.CoreWebView2 == null)
+            {
+                return;
+            }
+
+            var markdown = markdownRichTextBox.Text;
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            var html = Markdown.ToHtml(markdown, pipeline);
+
+            // HTMLテンプレート
+            var fullHtml = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta name='color-scheme' content='light'>
+    <style>
+        body {{
+            font-family: 'Yu Gothic UI', 'Meiryo', sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #ffffff;
+            color: #000000;
+        }}
+        h1, h2, h3, h4, h5, h6 {{
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: #000000;
+        }}
+        code {{
+            background-color: #f6f8fa;
+            color: #000000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+        }}
+        pre {{
+            background-color: #f6f8fa;
+            color: #000000;
+            padding: 16px;
+            border-radius: 6px;
+            overflow: auto;
+        }}
+        pre code {{
+            background-color: transparent;
+        }}
+        blockquote {{
+            border-left: 4px solid #dfe2e5;
+            padding-left: 16px;
+            color: #6a737d;
+        }}
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #ffffff;
+        }}
+        table th, table td {{
+            border: 1px solid #dfe2e5;
+            padding: 6px 13px;
+            color: #000000;
+        }}
+        a {{
+            color: #0366d6;
+        }}
+    </style>
+</head>
+<body>
+    {html}
+</body>
+</html>";
+
+            webView.NavigateToString(fullHtml);
+        }
+
+        // ノートを保存
+        private void SaveNote()
+        {
+            if (currentNote == null) return;
+
+            using var db = new AppDbContext();
+
+            // タイトルを更新
+            currentNote.Subject = titleTextBox.Text;
+            currentNote.Updated = DateTime.Now;
+
+            // Color と Status を保存
+            currentNote.ColorId = colorComboBox.SelectedValue?.ToString() ?? "";
+            currentNote.StatusId = statusComboBox.SelectedValue?.ToString() ?? "";
+
+            // 開始日と期限日を保存（時分秒は00:00:00として保存）
+            currentNote.StartDate = startDatePicker.Checked ? startDatePicker.Value.Date : null;
+            currentNote.DueDate = dueDatePicker.Checked ? dueDatePicker.Value.Date : null;
+
+            // ContentManagerを使用してMarkdownを保存
+            if (string.IsNullOrEmpty(currentNote.ContentFileName))
+            {
+                // 新規作成
+                currentNote.ContentFileName = ContentManager.Save(markdownRichTextBox.Text);
+            }
+            else
+            {
+                // 更新
+                ContentManager.Save(markdownRichTextBox.Text, currentNote.ContentFileName);
+            }
+
+            // DBに保存
+            if (currentNote.Id == 0)
+            {
+                // 新規登録
+                db.Notes.Add(currentNote);
+            }
+            else
+            {
+                // 更新
+                db.Notes.Update(currentNote);
+            }
+
+            db.SaveChanges();
         }
 
         //マウスのクリック位置を記憶
         private Point mousePoint;
 
-        //Form1のMouseDownイベントハンドラ
-        //マウスのボタンが押されたとき
-        private void EditForm_MouseDown(object sender,
-            System.Windows.Forms.MouseEventArgs e)
+        //タイトルバー領域のMouseDownイベントハンドラ
+        private void EditForm_MouseDown(object sender, MouseEventArgs e)
         {
-            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            // タイトルバー領域でのみドラッグ移動を有効化（最上部40ピクセル）
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left && e.Y < 40)
             {
                 //位置を記憶する
                 mousePoint = new Point(e.X, e.Y);
             }
         }
 
-        //Form1のMouseMoveイベントハンドラ
-        //マウスが動いたとき
-        private void EditForm_MouseMove(object sender,
-            System.Windows.Forms.MouseEventArgs e)
+        //タイトルバー領域のMouseMoveイベントハンドラ
+        private void EditForm_MouseMove(object sender, MouseEventArgs e)
         {
-            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            // タイトルバー領域でのドラッグ移動
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left && mousePoint != Point.Empty)
             {
                 this.Left += e.X - mousePoint.X;
                 this.Top += e.Y - mousePoint.Y;
-                //または、つぎのようにする
-                //this.Location = new Point(
-                //    this.Location.X + e.X - mousePoint.X,
-                //    this.Location.Y + e.Y - mousePoint.Y);
             }
+        }
+
+        // Colorが変更されたときにフォームの背景色を変更
+        private void ColorComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (colorComboBox.SelectedItem is Entities.Color selectedColor)
+            {
+                try
+                {
+                    this.BackColor = ColorTranslator.FromHtml(selectedColor.ColorCode);
+                }
+                catch
+                {
+                    // 色コードが無効な場合はデフォルトのまま
+                }
+            }
+        }
+
+        // 閉じるボタンのクリックイベント
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        // タイトルの入力状態をチェックして保存ボタンの有効/無効を切り替え
+        private void TitleTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (isEditMode)
+            {
+                UpdateSaveButtonState();
+            }
+        }
+
+        // 保存ボタンの状態を更新
+        private void UpdateSaveButtonState()
+        {
+            // タイトルが空の場合は保存ボタンを無効化
+            editButton.Enabled = !string.IsNullOrWhiteSpace(titleTextBox.Text);
         }
     }
 }

@@ -14,12 +14,17 @@ namespace MarkStickyNotes
             var menu = new ContextMenuStrip();
 
             menu.Items.Add(
-                "設定",
+                "付箋追加",
+                null,
+                (_, _) => ShowNote());
+
+            menu.Items.Add(
+                "付箋一覧",
                 null,
                 (_, _) => ShowSettings());
 
             menu.Items.Add(
-                "終了",
+                "アプリ終了",
                 null,
                 (_, _) => ExitApplication());
 
@@ -34,6 +39,13 @@ namespace MarkStickyNotes
             _notifyIcon.DoubleClick += (_, _) => ShowSettings();
 
             ShowSettings();
+        }
+
+        private void ShowNote()
+        {
+            // EditFormを開く
+            var editForm = new EditForm();
+            editForm.Show();
         }
 
         private void ShowSettings()
