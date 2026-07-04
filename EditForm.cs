@@ -369,6 +369,11 @@ namespace MarkStickyNotes
         a {{
             color: #0366d6;
         }}
+        img {{
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }}
     </style>
 </head>
 <body>
