@@ -26,6 +26,10 @@ namespace MarkStickyNotes
 
             // タイトルの変更を監視
             titleTextBox.TextChanged += TitleTextBox_TextChanged;
+
+            // ドラッグ&ドロップイベントハンドラを登録
+            markdownRichTextBox.DragEnter += MarkdownRichTextBox_DragEnter;
+            markdownRichTextBox.DragDrop += MarkdownRichTextBox_DragDrop;
         }
 
         public EditForm(int noteId) : this()
@@ -451,6 +455,87 @@ namespace MarkStickyNotes
         {
             // タイトルが空の場合は保存ボタンを無効化
             editButton.Enabled = !string.IsNullOrWhiteSpace(titleTextBox.Text);
+        }
+
+        // ドラッグ開始イベント
+        private void MarkdownRichTextBox_DragEnter(object sender, DragEventArgs e)
+        {
+            // ファイルがドラッグされている場合のみ許可
+            if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        // ドロップイベント
+        private void MarkdownRichTextBox_DragDrop(object sender, DragEventArgs e)
+        {
+            // 編集モードでない場合は処理しない
+            if (!isEditMode)
+            {
+                MessageBox.Show("編集モードでドラッグ&ドロップしてください。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // ノートが保存されていない場合は先に保存
+            if (currentNote == null || string.IsNullOrEmpty(currentNote.ContentFileName))
+            {
+                MessageBox.Show("ファイルを添付する前にノートを一度保存してください。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (e.Data?.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
+            {
+                var insertTexts = new List<string>();
+
+                foreach (var filePath in files)
+                {
+                    try
+                    {
+                        // ファイルを添付フォルダにコピー
+                        var relativePath = ContentManager.SaveAttachment(filePath, currentNote.ContentFileName);
+
+                        // ファイル名と拡張子を取得
+                        var fileName = Path.GetFileName(filePath);
+                        var extension = Path.GetExtension(filePath).ToLower();
+
+                        // 画像ファイルかどうかを判定
+                        var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
+                        string markdownLink;
+
+                        if (imageExtensions.Contains(extension))
+                        {
+                            // 画像の場合
+                            markdownLink = $"![]({relativePath})";
+                        }
+                        else
+                        {
+                            // その他のファイルの場合
+                            markdownLink = $"[{fileName}]({relativePath})";
+                        }
+
+                        insertTexts.Add(markdownLink);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"ファイルの処理中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                // カーソル位置にMarkdownリンクを挿入
+                if (insertTexts.Count > 0)
+                {
+                    var insertText = string.Join("\n", insertTexts);
+                    var selectionStart = markdownRichTextBox.SelectionStart;
+                    markdownRichTextBox.Text = markdownRichTextBox.Text.Insert(selectionStart, insertText);
+                    markdownRichTextBox.SelectionStart = selectionStart + insertText.Length;
+                    markdownRichTextBox.Focus();
+                }
+            }
         }
     }
 }

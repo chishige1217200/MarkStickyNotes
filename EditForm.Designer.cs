@@ -68,6 +68,7 @@
             // 
             // markdownRichTextBox
             // 
+            markdownRichTextBox.AllowDrop = true;
             markdownRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             markdownRichTextBox.Font = new Font("Yu Gothic UI", 10F);
             markdownRichTextBox.Location = new Point(12, 80);

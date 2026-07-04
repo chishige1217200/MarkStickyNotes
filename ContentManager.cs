@@ -64,5 +64,54 @@ namespace MarkStickyNotes
                 throw;
             }
         }
+
+        /// <summary>
+        /// 添付ファイル用ディレクトリパスを取得
+        /// </summary>
+        /// <param name="fileName">コンテンツファイル名</param>
+        /// <returns>添付ファイルディレクトリのフルパス</returns>
+        public static string GetAttachmentDirectoryPath(string fileName)
+        {
+            return Path.Combine(contentsDirPath, fileName + "_files");
+        }
+
+        /// <summary>
+        /// 添付ファイルを保存
+        /// </summary>
+        /// <param name="sourceFilePath">ソースファイルのフルパス</param>
+        /// <param name="contentFileName">コンテンツファイル名</param>
+        /// <returns>Markdown用の相対パス</returns>
+        public static string SaveAttachment(string sourceFilePath, string contentFileName)
+        {
+            var attachmentDir = GetAttachmentDirectoryPath(contentFileName);
+
+            // ディレクトリが存在しない場合は作成
+            if (!Directory.Exists(attachmentDir))
+            {
+                Directory.CreateDirectory(attachmentDir);
+            }
+
+            // ファイル名を取得
+            var originalFileName = Path.GetFileName(sourceFilePath);
+            var fileName = originalFileName;
+            var destinationPath = Path.Combine(attachmentDir, fileName);
+
+            // 同名ファイルが存在する場合は連番を付与
+            int counter = 1;
+            while (File.Exists(destinationPath))
+            {
+                var nameWithoutExt = Path.GetFileNameWithoutExtension(originalFileName);
+                var extension = Path.GetExtension(originalFileName);
+                fileName = $"{nameWithoutExt}_{counter}{extension}";
+                destinationPath = Path.Combine(attachmentDir, fileName);
+                counter++;
+            }
+
+            // ファイルをコピー
+            File.Copy(sourceFilePath, destinationPath);
+
+            // Markdown用の相対パス（コンテンツファイルからの相対パス）
+            return $"{contentFileName}_files/{fileName}";
+        }
     }
 }
