@@ -274,17 +274,27 @@ namespace MarkStickyNotes
     <style>
         body {{
             font-family: 'Yu Gothic UI', 'Meiryo', sans-serif;
-            padding: 20px;
-            line-height: 1.6;
+            padding: 8px;
+            margin: 0;
+            line-height: 1.3;
             background-color: #ffffff;
             color: #000000;
         }}
         h1, h2, h3, h4, h5, h6 {{
-            margin-top: 24px;
-            margin-bottom: 16px;
+            margin-top: 8px;
+            margin-bottom: 4px;
             font-weight: 600;
-            line-height: 1.25;
+            line-height: 1.1;
             color: #000000;
+        }}
+        p {{
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }}
+        ul, ol {{
+            margin-top: 4px;
+            margin-bottom: 4px;
+            padding-left: 20px;
         }}
         code {{
             background-color: #f6f8fa;
@@ -296,7 +306,8 @@ namespace MarkStickyNotes
         pre {{
             background-color: #f6f8fa;
             color: #000000;
-            padding: 16px;
+            padding: 8px;
+            margin: 4px 0;
             border-radius: 6px;
             overflow: auto;
         }}
@@ -305,17 +316,19 @@ namespace MarkStickyNotes
         }}
         blockquote {{
             border-left: 4px solid #dfe2e5;
-            padding-left: 16px;
+            padding-left: 12px;
+            margin: 4px 0;
             color: #6a737d;
         }}
         table {{
             border-collapse: collapse;
             width: 100%;
+            margin: 4px 0;
             background-color: #ffffff;
         }}
         table th, table td {{
             border: 1px solid #dfe2e5;
-            padding: 6px 13px;
+            padding: 4px 8px;
             color: #000000;
         }}
         a {{
