@@ -119,10 +119,10 @@ namespace MarkStickyNotes
         public void LoadNote(int noteId)
         {
             using var db = new AppDbContext();
-            currentNote = db.Notes.Find(noteId);
-            Text += $" - id: {noteId}"; // フォームタイトルを変更
+            currentNote = db.Notes.FirstOrDefault(n => n.Id == noteId && !n.IsDeleted);
             if (currentNote != null)
             {
+                Text += $" - id: {noteId}"; // フォームタイトルを変更
                 titleTextBox.Text = currentNote.Subject;
 
                 // ContentManagerからMarkdownを読み込む
@@ -173,6 +173,11 @@ namespace MarkStickyNotes
                 }
 
                 SetViewMode(false); // 閲覧モードで表示
+            }
+            else
+            {
+                // ノートが見つからない場合は新規作成
+                CreateNewNote();
             }
         }
 
@@ -496,7 +501,7 @@ namespace MarkStickyNotes
                     using var db = new AppDbContext();
 
                     // データベースで論理削除フラグを立てる
-                    var noteToDelete = db.Notes.Find(currentNote.Id);
+                    var noteToDelete = db.Notes.FirstOrDefault(n => n.Id == currentNote.Id && !n.IsDeleted);
                     if (noteToDelete != null)
                     {
                         noteToDelete.IsDeleted = true;
