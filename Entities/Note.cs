@@ -8,6 +8,7 @@ namespace MarkStickyNotes.Entities
     {
         public int Id { get; set; }
         public string Subject { get; set; } = string.Empty;
+        public string ContentFileName { get; set; } = string.Empty;
         public string ColorId { get; set; } = string.Empty;
         public string StatusId { get; set; } = string.Empty;
         public DateTime? StartDate { get; set; }
