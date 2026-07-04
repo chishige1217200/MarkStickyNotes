@@ -41,8 +41,8 @@ namespace MarkStickyNotes
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            // ステータス名を入力するダイアログを表示
-            string? statusName = ShowInputDialog("新しいステータス名を入力してください:", "ステータス追加", "");
+            // 状態名を入力するダイアログを表示
+            string? statusName = ShowInputDialog("新しい状態名を入力してください:", "状態追加", "");
 
             if (string.IsNullOrWhiteSpace(statusName))
             {
@@ -81,12 +81,12 @@ namespace MarkStickyNotes
         {
             if (statusListBox.SelectedItem is not Status selectedStatus)
             {
-                MessageBox.Show("編集するステータスを選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("編集する状態を選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             // 現在の名称を初期値として入力ダイアログを表示
-            string? newStatusName = ShowInputDialog("ステータス名を入力してください:", "ステータス編集", selectedStatus.Name);
+            string? newStatusName = ShowInputDialog("状態名を入力してください:", "状態編集", selectedStatus.Name);
 
             if (string.IsNullOrWhiteSpace(newStatusName))
             {
@@ -146,12 +146,12 @@ namespace MarkStickyNotes
         {
             if (statusListBox.SelectedItem is not Status selectedStatus)
             {
-                MessageBox.Show("削除するステータスを選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("削除する状態を選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             var result = MessageBox.Show(
-                $"ステータス「{selectedStatus.Name}」を削除してもよろしいですか？",
+                $"状態「{selectedStatus.Name}」を削除してもよろしいですか？",
                 "削除確認",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -179,7 +179,7 @@ namespace MarkStickyNotes
         {
             if (statusListBox.SelectedItem is not Status selectedStatus)
             {
-                MessageBox.Show("移動するステータスを選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("移動する状態を選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -215,7 +215,7 @@ namespace MarkStickyNotes
         {
             if (statusListBox.SelectedItem is not Status selectedStatus)
             {
-                MessageBox.Show("移動するステータスを選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("移動する状態を選択してください。", "確認", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 

@@ -46,7 +46,7 @@
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(96, 15);
             statusLabel.TabIndex = 0;
-            statusLabel.Text = "ステータス管理:";
+            statusLabel.Text = "状態管理:";
             // 
             // statusListBox
             // 

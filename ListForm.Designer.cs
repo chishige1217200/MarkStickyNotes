@@ -177,7 +177,7 @@
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(43, 15);
             statusLabel.TabIndex = 11;
-            statusLabel.Text = "状況：";
+            statusLabel.Text = "状態：";
             // 
             // startDateLabel
             // 

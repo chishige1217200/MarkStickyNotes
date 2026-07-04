@@ -488,35 +488,36 @@ namespace MarkStickyNotes
 
             // 削除確認ダイアログを表示
             var result = MessageBox.Show(
-                $"「{currentNote.Subject}」を削除しますか？",
+                $"「{currentNote.Subject}」を削除してもよろしいですか？",
                 "削除確認",
-                MessageBoxButtons.OKCancel,
+                MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
-            // OKが押された場合のみ削除（論理削除）
-            if (result == DialogResult.OK)
+            if (result != DialogResult.Yes)
             {
-                try
-                {
-                    using var db = new AppDbContext();
+                return;
+            }
 
-                    // データベースで論理削除フラグを立てる
-                    var noteToDelete = db.Notes.FirstOrDefault(n => n.Id == currentNote.Id && !n.IsDeleted);
-                    if (noteToDelete != null)
-                    {
-                        noteToDelete.IsDeleted = true;
-                        noteToDelete.Updated = DateTime.Now;
-                        db.Notes.Update(noteToDelete);
-                        db.SaveChanges();
-                    }
+            try
+            {
+                using var db = new AppDbContext();
 
-                    // フォームを閉じる
-                    this.Close();
-                }
-                catch (Exception ex)
+                // データベースで論理削除フラグを立てる
+                var noteToDelete = db.Notes.FirstOrDefault(n => n.Id == currentNote.Id && !n.IsDeleted);
+                if (noteToDelete != null)
                 {
-                    MessageBox.Show($"削除中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    noteToDelete.IsDeleted = true;
+                    noteToDelete.Updated = DateTime.Now;
+                    db.Notes.Update(noteToDelete);
+                    db.SaveChanges();
                 }
+
+                // フォームを閉じる
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"削除中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

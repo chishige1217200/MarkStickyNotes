@@ -80,12 +80,12 @@ namespace MarkStickyNotes
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             });
 
-            // 状況列
+            // 状態列
             resultsDataGridView.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "StatusName",
                 DataPropertyName = "StatusName",
-                HeaderText = "状況",
+                HeaderText = "状態",
                 Width = 100,
                 MinimumWidth = 80,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
@@ -226,7 +226,7 @@ namespace MarkStickyNotes
                 query = query.Where(n => n.Subject.Contains(titleKeyword));
             }
 
-            // 状況検索（複数選択）
+            // 状態検索（複数選択）
             var selectedStatuses = statusCheckedListBox.CheckedItems.Cast<Status>().ToList();
             if (selectedStatuses.Any())
             {
