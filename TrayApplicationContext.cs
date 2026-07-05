@@ -9,6 +9,7 @@ namespace MarkStickyNotes
         private readonly NotifyIcon _notifyIcon;
         private ListForm? _listForm;
         private SettingsForm? _settingsForm;
+        private AboutForm? _aboutForm;
 
         public TrayApplicationContext()
         {
@@ -28,6 +29,11 @@ namespace MarkStickyNotes
                 "アプリ設定",
                 null,
                 (_, _) => ShowSettings());
+
+            menu.Items.Add(
+                "アプリについて",
+                null,
+                (_, _) => ShowAbout());
 
             menu.Items.Add(
                 "アプリ終了",
@@ -94,6 +100,27 @@ namespace MarkStickyNotes
 
             _settingsForm.WindowState = FormWindowState.Normal;
             _settingsForm.Activate();
+        }
+
+        private void ShowAbout()
+        {
+            if (_aboutForm == null || _aboutForm.IsDisposed)
+            {
+                _aboutForm = new AboutForm();
+
+                _aboutForm.FormClosed += (_, _) =>
+                {
+                    _aboutForm = null;
+                };
+            }
+
+            if (!_aboutForm.Visible)
+            {
+                _aboutForm.Show();
+            }
+
+            _aboutForm.WindowState = FormWindowState.Normal;
+            _aboutForm.Activate();
         }
 
         private void ExitApplication()

@@ -8,7 +8,11 @@ namespace MarkStickyNotes.DbContexts
     {
         public DbSet<Note> Notes => Set<Note>();
         public DbSet<Color> Colors => Set<Color>();
-        public DbSet<Status> Status => Set<Status>();
+        public DbSet<IssueType> IssueTypes => Set<IssueType>();
+        public DbSet<Assignee> Assignees => Set<Assignee>();
+        public DbSet<Status> Statuses => Set<Status>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<Priority> Priorities => Set<Priority>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=database.db");
@@ -67,6 +71,42 @@ namespace MarkStickyNotes.DbContexts
                 }
             );
 
+            modelBuilder.Entity<IssueType>().HasData(
+                new IssueType
+                {
+                    Id = 1,
+                    Name = "バグ",
+                    Order = 1
+                },
+                new IssueType
+                {
+                    Id = 2,
+                    Name = "タスク",
+                    Order = 2
+                },
+                new IssueType
+                {
+                    Id = 3,
+                    Name = "要望",
+                    Order = 3
+                },
+                new IssueType
+                {
+                    Id = 4,
+                    Name = "その他",
+                    Order = 4
+                }
+            );
+
+            modelBuilder.Entity<Assignee>().HasData(
+                new Assignee
+                {
+                    Id = 1,
+                    Name = "あなた",
+                    Order = 1
+                }
+            );
+
             modelBuilder.Entity<Status>().HasData(
                 new Status
                 {
@@ -91,6 +131,36 @@ namespace MarkStickyNotes.DbContexts
                     Id = 4,
                     Name = "完了",
                     Order = 4
+                }
+            );
+
+            modelBuilder.Entity<Category>().HasData(
+                new Category
+                {
+                    Id = 1,
+                    Name = "未分類",
+                    Order = 1
+                }
+            );
+
+            modelBuilder.Entity<Priority>().HasData(
+                new Priority
+                {
+                    Id = 1,
+                    Name = "高",
+                    Order = 1
+                },
+                new Priority
+                {
+                    Id = 2,
+                    Name = "中",
+                    Order = 2
+                },
+                new Priority
+                {
+                    Id = 3,
+                    Name = "低",
+                    Order = 3
                 }
             );
         }

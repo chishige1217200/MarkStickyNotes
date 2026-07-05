@@ -17,6 +17,66 @@ namespace MarkStickyNotes.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
 
+            modelBuilder.Entity("MarkStickyNotes.Entities.Assignee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Assignees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "あなた",
+                            Order = 1
+                        });
+                });
+
+            modelBuilder.Entity("MarkStickyNotes.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "未分類",
+                            Order = 1
+                        });
+                });
+
             modelBuilder.Entity("MarkStickyNotes.Entities.Color", b =>
                 {
                     b.Property<int>("Id")
@@ -26,6 +86,9 @@ namespace MarkStickyNotes.Migrations
                     b.Property<string>("ColorCode")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -43,6 +106,7 @@ namespace MarkStickyNotes.Migrations
                         {
                             Id = 1,
                             ColorCode = "#D7AD04",
+                            IsDeleted = false,
                             Name = "Yellow",
                             Order = 1
                         },
@@ -50,6 +114,7 @@ namespace MarkStickyNotes.Migrations
                         {
                             Id = 2,
                             ColorCode = "#6FD262",
+                            IsDeleted = false,
                             Name = "Green",
                             Order = 2
                         },
@@ -57,6 +122,7 @@ namespace MarkStickyNotes.Migrations
                         {
                             Id = 3,
                             ColorCode = "#EA86C2",
+                            IsDeleted = false,
                             Name = "Pink",
                             Order = 3
                         },
@@ -64,6 +130,7 @@ namespace MarkStickyNotes.Migrations
                         {
                             Id = 4,
                             ColorCode = "#C78EFF",
+                            IsDeleted = false,
                             Name = "Purple",
                             Order = 4
                         },
@@ -71,6 +138,7 @@ namespace MarkStickyNotes.Migrations
                         {
                             Id = 5,
                             ColorCode = "#5AC0E7",
+                            IsDeleted = false,
                             Name = "Blue",
                             Order = 5
                         },
@@ -78,6 +146,7 @@ namespace MarkStickyNotes.Migrations
                         {
                             Id = 6,
                             ColorCode = "#AAAAAA",
+                            IsDeleted = false,
                             Name = "Gray",
                             Order = 6
                         },
@@ -85,8 +154,60 @@ namespace MarkStickyNotes.Migrations
                         {
                             Id = 7,
                             ColorCode = "#4E4E4E",
+                            IsDeleted = false,
                             Name = "DarkGray",
                             Order = 7
+                        });
+                });
+
+            modelBuilder.Entity("MarkStickyNotes.Entities.IssueType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IssueTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "バグ",
+                            Order = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Name = "タスク",
+                            Order = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDeleted = false,
+                            Name = "要望",
+                            Order = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsDeleted = false,
+                            Name = "その他",
+                            Order = 4
                         });
                 });
 
@@ -95,6 +216,14 @@ namespace MarkStickyNotes.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AssigneeId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ColorId")
                         .IsRequired()
@@ -112,6 +241,14 @@ namespace MarkStickyNotes.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("IssueTypeId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PriorityId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("TEXT");
@@ -132,6 +269,50 @@ namespace MarkStickyNotes.Migrations
                     b.ToTable("Notes");
                 });
 
+            modelBuilder.Entity("MarkStickyNotes.Entities.Priority", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Priorities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false,
+                            Name = "高",
+                            Order = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false,
+                            Name = "中",
+                            Order = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDeleted = false,
+                            Name = "低",
+                            Order = 3
+                        });
+                });
+
             modelBuilder.Entity("MarkStickyNotes.Entities.Status", b =>
                 {
                     b.Property<int>("Id")
@@ -150,7 +331,7 @@ namespace MarkStickyNotes.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Status");
+                    b.ToTable("Statuses");
 
                     b.HasData(
                         new

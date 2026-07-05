@@ -1,6 +1,6 @@
 ﻿namespace MarkStickyNotes.Entities
 {
-    public class Status : OrderedEntity
+    public class IssueType : OrderedEntity
     {
     }
 }
