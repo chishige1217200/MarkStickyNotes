@@ -29,90 +29,135 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
-            statusLabel = new Label();
-            statusListBox = new ListBox();
-            addButton = new Button();
-            editButton = new Button();
-            deleteButton = new Button();
-            upButton = new Button();
-            downButton = new Button();
+            tabControl = new TabControl();
+            statusTabPage = new TabPage();
+            statusEditor = new OrderedEntityEditorControl();
+            issueTypeTabPage = new TabPage();
+            issueTypeEditor = new OrderedEntityEditorControl();
+            assigneeTabPage = new TabPage();
+            assigneeEditor = new OrderedEntityEditorControl();
+            categoryTabPage = new TabPage();
+            categoryEditor = new OrderedEntityEditorControl();
+            priorityTabPage = new TabPage();
+            priorityEditor = new OrderedEntityEditorControl();
             closeButton = new Button();
+            tabControl.SuspendLayout();
+            statusTabPage.SuspendLayout();
+            issueTypeTabPage.SuspendLayout();
+            assigneeTabPage.SuspendLayout();
+            categoryTabPage.SuspendLayout();
+            priorityTabPage.SuspendLayout();
             SuspendLayout();
             // 
-            // statusLabel
+            // tabControl
             // 
-            statusLabel.AutoSize = true;
-            statusLabel.Location = new Point(12, 9);
-            statusLabel.Name = "statusLabel";
-            statusLabel.Size = new Size(96, 15);
-            statusLabel.TabIndex = 0;
-            statusLabel.Text = "状態管理:";
+            tabControl.Controls.Add(statusTabPage);
+            tabControl.Controls.Add(issueTypeTabPage);
+            tabControl.Controls.Add(assigneeTabPage);
+            tabControl.Controls.Add(categoryTabPage);
+            tabControl.Controls.Add(priorityTabPage);
+            tabControl.Location = new Point(12, 12);
+            tabControl.Name = "tabControl";
+            tabControl.SelectedIndex = 0;
+            tabControl.Size = new Size(428, 394);
+            tabControl.TabIndex = 0;
             // 
-            // statusListBox
+            // statusTabPage
             // 
-            statusListBox.FormattingEnabled = true;
-            statusListBox.ItemHeight = 15;
-            statusListBox.Location = new Point(12, 27);
-            statusListBox.Name = "statusListBox";
-            statusListBox.Size = new Size(300, 349);
-            statusListBox.TabIndex = 1;
+            statusTabPage.Controls.Add(statusEditor);
+            statusTabPage.Location = new Point(4, 24);
+            statusTabPage.Name = "statusTabPage";
+            statusTabPage.Padding = new Padding(3);
+            statusTabPage.Size = new Size(420, 366);
+            statusTabPage.TabIndex = 0;
+            statusTabPage.Text = "状態";
+            statusTabPage.UseVisualStyleBackColor = true;
             // 
-            // addButton
+            // statusEditor
             // 
-            addButton.Location = new Point(318, 27);
-            addButton.Name = "addButton";
-            addButton.Size = new Size(100, 30);
-            addButton.TabIndex = 2;
-            addButton.Text = "追加";
-            addButton.UseVisualStyleBackColor = true;
-            addButton.Click += AddButton_Click;
+            statusEditor.Location = new Point(6, 6);
+            statusEditor.Name = "statusEditor";
+            statusEditor.Size = new Size(412, 355);
+            statusEditor.TabIndex = 0;
             // 
-            // editButton
+            // issueTypeTabPage
             // 
-            editButton.Location = new Point(318, 63);
-            editButton.Name = "editButton";
-            editButton.Size = new Size(100, 30);
-            editButton.TabIndex = 3;
-            editButton.Text = "編集";
-            editButton.UseVisualStyleBackColor = true;
-            editButton.Click += EditButton_Click;
+            issueTypeTabPage.Controls.Add(issueTypeEditor);
+            issueTypeTabPage.Location = new Point(4, 24);
+            issueTypeTabPage.Name = "issueTypeTabPage";
+            issueTypeTabPage.Padding = new Padding(3);
+            issueTypeTabPage.Size = new Size(420, 366);
+            issueTypeTabPage.TabIndex = 1;
+            issueTypeTabPage.Text = "種別";
+            issueTypeTabPage.UseVisualStyleBackColor = true;
             // 
-            // deleteButton
+            // issueTypeEditor
             // 
-            deleteButton.Location = new Point(318, 99);
-            deleteButton.Name = "deleteButton";
-            deleteButton.Size = new Size(100, 30);
-            deleteButton.TabIndex = 4;
-            deleteButton.Text = "削除";
-            deleteButton.UseVisualStyleBackColor = true;
-            deleteButton.Click += DeleteButton_Click;
+            issueTypeEditor.Location = new Point(6, 6);
+            issueTypeEditor.Name = "issueTypeEditor";
+            issueTypeEditor.Size = new Size(412, 355);
+            issueTypeEditor.TabIndex = 0;
             // 
-            // upButton
+            // assigneeTabPage
             // 
-            upButton.Location = new Point(318, 135);
-            upButton.Name = "upButton";
-            upButton.Size = new Size(100, 30);
-            upButton.TabIndex = 5;
-            upButton.Text = "上へ";
-            upButton.UseVisualStyleBackColor = true;
-            upButton.Click += UpButton_Click;
+            assigneeTabPage.Controls.Add(assigneeEditor);
+            assigneeTabPage.Location = new Point(4, 24);
+            assigneeTabPage.Name = "assigneeTabPage";
+            assigneeTabPage.Padding = new Padding(3);
+            assigneeTabPage.Size = new Size(420, 366);
+            assigneeTabPage.TabIndex = 2;
+            assigneeTabPage.Text = "担当者";
+            assigneeTabPage.UseVisualStyleBackColor = true;
             // 
-            // downButton
+            // assigneeEditor
             // 
-            downButton.Location = new Point(318, 171);
-            downButton.Name = "downButton";
-            downButton.Size = new Size(100, 30);
-            downButton.TabIndex = 6;
-            downButton.Text = "下へ";
-            downButton.UseVisualStyleBackColor = true;
-            downButton.Click += DownButton_Click;
+            assigneeEditor.Location = new Point(6, 6);
+            assigneeEditor.Name = "assigneeEditor";
+            assigneeEditor.Size = new Size(412, 355);
+            assigneeEditor.TabIndex = 0;
+            // 
+            // categoryTabPage
+            // 
+            categoryTabPage.Controls.Add(categoryEditor);
+            categoryTabPage.Location = new Point(4, 24);
+            categoryTabPage.Name = "categoryTabPage";
+            categoryTabPage.Padding = new Padding(3);
+            categoryTabPage.Size = new Size(420, 366);
+            categoryTabPage.TabIndex = 3;
+            categoryTabPage.Text = "カテゴリー";
+            categoryTabPage.UseVisualStyleBackColor = true;
+            // 
+            // categoryEditor
+            // 
+            categoryEditor.Location = new Point(6, 6);
+            categoryEditor.Name = "categoryEditor";
+            categoryEditor.Size = new Size(412, 355);
+            categoryEditor.TabIndex = 0;
+            // 
+            // priorityTabPage
+            // 
+            priorityTabPage.Controls.Add(priorityEditor);
+            priorityTabPage.Location = new Point(4, 24);
+            priorityTabPage.Name = "priorityTabPage";
+            priorityTabPage.Padding = new Padding(3);
+            priorityTabPage.Size = new Size(420, 366);
+            priorityTabPage.TabIndex = 4;
+            priorityTabPage.Text = "優先度";
+            priorityTabPage.UseVisualStyleBackColor = true;
+            // 
+            // priorityEditor
+            // 
+            priorityEditor.Location = new Point(6, 6);
+            priorityEditor.Name = "priorityEditor";
+            priorityEditor.Size = new Size(412, 355);
+            priorityEditor.TabIndex = 0;
             // 
             // closeButton
             // 
-            closeButton.Location = new Point(318, 346);
+            closeButton.Location = new Point(340, 412);
             closeButton.Name = "closeButton";
             closeButton.Size = new Size(100, 30);
-            closeButton.TabIndex = 7;
+            closeButton.TabIndex = 1;
             closeButton.Text = "閉じる";
             closeButton.UseVisualStyleBackColor = true;
             closeButton.Click += CloseButton_Click;
@@ -121,15 +166,9 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(434, 391);
+            ClientSize = new Size(452, 454);
             Controls.Add(closeButton);
-            Controls.Add(downButton);
-            Controls.Add(upButton);
-            Controls.Add(deleteButton);
-            Controls.Add(editButton);
-            Controls.Add(addButton);
-            Controls.Add(statusListBox);
-            Controls.Add(statusLabel);
+            Controls.Add(tabControl);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -138,19 +177,28 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "MarkStickyNotes - 設定";
             Load += SettingsForm_Load;
+            tabControl.ResumeLayout(false);
+            statusTabPage.ResumeLayout(false);
+            issueTypeTabPage.ResumeLayout(false);
+            assigneeTabPage.ResumeLayout(false);
+            categoryTabPage.ResumeLayout(false);
+            priorityTabPage.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
-        private Label statusLabel;
-        private ListBox statusListBox;
-        private Button addButton;
-        private Button editButton;
-        private Button deleteButton;
-        private Button upButton;
-        private Button downButton;
+        private TabControl tabControl;
+        private TabPage statusTabPage;
+        private OrderedEntityEditorControl statusEditor;
+        private TabPage issueTypeTabPage;
+        private OrderedEntityEditorControl issueTypeEditor;
+        private TabPage assigneeTabPage;
+        private OrderedEntityEditorControl assigneeEditor;
+        private TabPage categoryTabPage;
+        private OrderedEntityEditorControl categoryEditor;
+        private TabPage priorityTabPage;
+        private OrderedEntityEditorControl priorityEditor;
         private Button closeButton;
     }
 }
