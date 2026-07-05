@@ -198,8 +198,8 @@ namespace MarkStickyNotes
                 Name = "PriorityName",
                 DataPropertyName = "PriorityName",
                 HeaderText = "優先度",
-                Width = 80,
-                MinimumWidth = 60,
+                Width = 70,
+                MinimumWidth = 70,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
 
@@ -209,8 +209,8 @@ namespace MarkStickyNotes
                 Name = "StartDate",
                 DataPropertyName = "StartDate",
                 HeaderText = "開始日",
-                Width = 100,
-                MinimumWidth = 80,
+                Width = 70,
+                MinimumWidth = 70,
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy/MM/dd", NullValue = "" },
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
@@ -221,8 +221,8 @@ namespace MarkStickyNotes
                 Name = "DueDate",
                 DataPropertyName = "DueDate",
                 HeaderText = "期限日",
-                Width = 100,
-                MinimumWidth = 80,
+                Width = 70,
+                MinimumWidth = 70,
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy/MM/dd", NullValue = "" },
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
@@ -233,8 +233,8 @@ namespace MarkStickyNotes
                 Name = "Updated",
                 DataPropertyName = "Updated",
                 HeaderText = "更新日時",
-                Width = 150,
-                MinimumWidth = 120,
+                Width = 130,
+                MinimumWidth = 130,
                 DefaultCellStyle = new DataGridViewCellStyle { Format = "yyyy/MM/dd HH:mm:ss" },
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });

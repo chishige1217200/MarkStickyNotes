@@ -65,14 +65,14 @@
             titleSearchTextBox.Location = new Point(80, 12);
             titleSearchTextBox.Name = "titleSearchTextBox";
             titleSearchTextBox.PlaceholderText = "タイトルで検索";
-            titleSearchTextBox.Size = new Size(782, 23);
+            titleSearchTextBox.Size = new Size(852, 23);
             titleSearchTextBox.TabIndex = 0;
             // 
             // issueTypeCheckedListBox
             // 
             issueTypeCheckedListBox.CheckOnClick = true;
             issueTypeCheckedListBox.FormattingEnabled = true;
-            issueTypeCheckedListBox.Location = new Point(80, 41);
+            issueTypeCheckedListBox.Location = new Point(80, 59);
             issueTypeCheckedListBox.Name = "issueTypeCheckedListBox";
             issueTypeCheckedListBox.Size = new Size(120, 94);
             issueTypeCheckedListBox.TabIndex = 1;
@@ -81,7 +81,7 @@
             // 
             assigneeCheckedListBox.CheckOnClick = true;
             assigneeCheckedListBox.FormattingEnabled = true;
-            assigneeCheckedListBox.Location = new Point(218, 41);
+            assigneeCheckedListBox.Location = new Point(218, 59);
             assigneeCheckedListBox.Name = "assigneeCheckedListBox";
             assigneeCheckedListBox.Size = new Size(120, 94);
             assigneeCheckedListBox.TabIndex = 2;
@@ -90,7 +90,7 @@
             // 
             statusCheckedListBox.CheckOnClick = true;
             statusCheckedListBox.FormattingEnabled = true;
-            statusCheckedListBox.Location = new Point(356, 41);
+            statusCheckedListBox.Location = new Point(356, 59);
             statusCheckedListBox.Name = "statusCheckedListBox";
             statusCheckedListBox.Size = new Size(120, 94);
             statusCheckedListBox.TabIndex = 3;
@@ -99,7 +99,7 @@
             // 
             categoryCheckedListBox.CheckOnClick = true;
             categoryCheckedListBox.FormattingEnabled = true;
-            categoryCheckedListBox.Location = new Point(494, 41);
+            categoryCheckedListBox.Location = new Point(494, 59);
             categoryCheckedListBox.Name = "categoryCheckedListBox";
             categoryCheckedListBox.Size = new Size(120, 94);
             categoryCheckedListBox.TabIndex = 4;
@@ -108,7 +108,7 @@
             // 
             priorityCheckedListBox.CheckOnClick = true;
             priorityCheckedListBox.FormattingEnabled = true;
-            priorityCheckedListBox.Location = new Point(632, 41);
+            priorityCheckedListBox.Location = new Point(632, 59);
             priorityCheckedListBox.Name = "priorityCheckedListBox";
             priorityCheckedListBox.Size = new Size(120, 94);
             priorityCheckedListBox.TabIndex = 5;
@@ -118,7 +118,7 @@
             startDateFromPicker.Checked = false;
             startDateFromPicker.CustomFormat = "yyyy/MM/dd";
             startDateFromPicker.Format = DateTimePickerFormat.Custom;
-            startDateFromPicker.Location = new Point(80, 145);
+            startDateFromPicker.Location = new Point(80, 163);
             startDateFromPicker.Name = "startDateFromPicker";
             startDateFromPicker.ShowCheckBox = true;
             startDateFromPicker.Size = new Size(120, 23);
@@ -129,7 +129,7 @@
             startDateToPicker.Checked = false;
             startDateToPicker.CustomFormat = "yyyy/MM/dd";
             startDateToPicker.Format = DateTimePickerFormat.Custom;
-            startDateToPicker.Location = new Point(226, 145);
+            startDateToPicker.Location = new Point(226, 163);
             startDateToPicker.Name = "startDateToPicker";
             startDateToPicker.ShowCheckBox = true;
             startDateToPicker.Size = new Size(120, 23);
@@ -140,52 +140,52 @@
             dueDateFromPicker.Checked = false;
             dueDateFromPicker.CustomFormat = "yyyy/MM/dd";
             dueDateFromPicker.Format = DateTimePickerFormat.Custom;
-            dueDateFromPicker.Location = new Point(80, 174);
+            dueDateFromPicker.Location = new Point(80, 192);
             dueDateFromPicker.Name = "dueDateFromPicker";
             dueDateFromPicker.ShowCheckBox = true;
             dueDateFromPicker.Size = new Size(120, 23);
-            dueDateFromPicker.TabIndex = 8;
+            dueDateFromPicker.TabIndex = 10;
             // 
             // dueDateToPicker
             // 
             dueDateToPicker.Checked = false;
             dueDateToPicker.CustomFormat = "yyyy/MM/dd";
             dueDateToPicker.Format = DateTimePickerFormat.Custom;
-            dueDateToPicker.Location = new Point(226, 174);
+            dueDateToPicker.Location = new Point(226, 192);
             dueDateToPicker.Name = "dueDateToPicker";
             dueDateToPicker.ShowCheckBox = true;
             dueDateToPicker.Size = new Size(120, 23);
-            dueDateToPicker.TabIndex = 9;
+            dueDateToPicker.TabIndex = 11;
             // 
             // updatedDateFromPicker
             // 
             updatedDateFromPicker.Checked = false;
             updatedDateFromPicker.CustomFormat = "yyyy/MM/dd";
             updatedDateFromPicker.Format = DateTimePickerFormat.Custom;
-            updatedDateFromPicker.Location = new Point(424, 145);
+            updatedDateFromPicker.Location = new Point(424, 163);
             updatedDateFromPicker.Name = "updatedDateFromPicker";
             updatedDateFromPicker.ShowCheckBox = true;
             updatedDateFromPicker.Size = new Size(120, 23);
-            updatedDateFromPicker.TabIndex = 10;
+            updatedDateFromPicker.TabIndex = 8;
             // 
             // updatedDateToPicker
             // 
             updatedDateToPicker.Checked = false;
             updatedDateToPicker.CustomFormat = "yyyy/MM/dd";
             updatedDateToPicker.Format = DateTimePickerFormat.Custom;
-            updatedDateToPicker.Location = new Point(570, 145);
+            updatedDateToPicker.Location = new Point(570, 163);
             updatedDateToPicker.Name = "updatedDateToPicker";
             updatedDateToPicker.ShowCheckBox = true;
             updatedDateToPicker.Size = new Size(120, 23);
-            updatedDateToPicker.TabIndex = 11;
+            updatedDateToPicker.TabIndex = 9;
             // 
             // searchButton
             // 
             searchButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            searchButton.Location = new Point(787, 169);
+            searchButton.Location = new Point(857, 187);
             searchButton.Name = "searchButton";
             searchButton.Size = new Size(75, 29);
-            searchButton.TabIndex = 13;
+            searchButton.TabIndex = 12;
             searchButton.Text = "検索";
             searchButton.UseVisualStyleBackColor = true;
             searchButton.Click += SearchButton_Click;
@@ -196,12 +196,12 @@
             resultsDataGridView.AllowUserToDeleteRows = false;
             resultsDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             resultsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            resultsDataGridView.Location = new Point(12, 210);
+            resultsDataGridView.Location = new Point(12, 222);
             resultsDataGridView.MultiSelect = false;
             resultsDataGridView.Name = "resultsDataGridView";
             resultsDataGridView.ReadOnly = true;
             resultsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            resultsDataGridView.Size = new Size(850, 279);
+            resultsDataGridView.Size = new Size(920, 275);
             resultsDataGridView.TabIndex = 14;
             resultsDataGridView.CellDoubleClick += ResultsDataGridView_CellDoubleClick;
             // 
@@ -217,7 +217,7 @@
             // issueTypeLabel
             // 
             issueTypeLabel.AutoSize = true;
-            issueTypeLabel.Location = new Point(12, 41);
+            issueTypeLabel.Location = new Point(80, 41);
             issueTypeLabel.Name = "issueTypeLabel";
             issueTypeLabel.Size = new Size(43, 15);
             issueTypeLabel.TabIndex = 16;
@@ -226,7 +226,7 @@
             // assigneeLabel
             // 
             assigneeLabel.AutoSize = true;
-            assigneeLabel.Location = new Point(218, 23);
+            assigneeLabel.Location = new Point(218, 41);
             assigneeLabel.Name = "assigneeLabel";
             assigneeLabel.Size = new Size(55, 15);
             assigneeLabel.TabIndex = 17;
@@ -235,7 +235,7 @@
             // statusLabel
             // 
             statusLabel.AutoSize = true;
-            statusLabel.Location = new Point(356, 23);
+            statusLabel.Location = new Point(356, 41);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(43, 15);
             statusLabel.TabIndex = 18;
@@ -244,7 +244,7 @@
             // categoryLabel
             // 
             categoryLabel.AutoSize = true;
-            categoryLabel.Location = new Point(494, 23);
+            categoryLabel.Location = new Point(494, 41);
             categoryLabel.Name = "categoryLabel";
             categoryLabel.Size = new Size(54, 15);
             categoryLabel.TabIndex = 19;
@@ -253,7 +253,7 @@
             // priorityLabel
             // 
             priorityLabel.AutoSize = true;
-            priorityLabel.Location = new Point(632, 23);
+            priorityLabel.Location = new Point(632, 41);
             priorityLabel.Name = "priorityLabel";
             priorityLabel.Size = new Size(55, 15);
             priorityLabel.TabIndex = 20;
@@ -262,7 +262,7 @@
             // startDateLabel
             // 
             startDateLabel.AutoSize = true;
-            startDateLabel.Location = new Point(12, 148);
+            startDateLabel.Location = new Point(12, 166);
             startDateLabel.Name = "startDateLabel";
             startDateLabel.Size = new Size(55, 15);
             startDateLabel.TabIndex = 21;
@@ -271,7 +271,7 @@
             // dueDateLabel
             // 
             dueDateLabel.AutoSize = true;
-            dueDateLabel.Location = new Point(12, 177);
+            dueDateLabel.Location = new Point(12, 195);
             dueDateLabel.Name = "dueDateLabel";
             dueDateLabel.Size = new Size(55, 15);
             dueDateLabel.TabIndex = 22;
@@ -280,7 +280,7 @@
             // updatedDateLabel
             // 
             updatedDateLabel.AutoSize = true;
-            updatedDateLabel.Location = new Point(356, 148);
+            updatedDateLabel.Location = new Point(356, 166);
             updatedDateLabel.Name = "updatedDateLabel";
             updatedDateLabel.Size = new Size(67, 15);
             updatedDateLabel.TabIndex = 23;
@@ -289,7 +289,7 @@
             // toLabel1
             // 
             toLabel1.AutoSize = true;
-            toLabel1.Location = new Point(206, 148);
+            toLabel1.Location = new Point(206, 166);
             toLabel1.Name = "toLabel1";
             toLabel1.Size = new Size(19, 15);
             toLabel1.TabIndex = 24;
@@ -298,7 +298,7 @@
             // toLabel2
             // 
             toLabel2.AutoSize = true;
-            toLabel2.Location = new Point(206, 177);
+            toLabel2.Location = new Point(206, 195);
             toLabel2.Name = "toLabel2";
             toLabel2.Size = new Size(19, 15);
             toLabel2.TabIndex = 25;
@@ -307,7 +307,7 @@
             // toLabel3
             // 
             toLabel3.AutoSize = true;
-            toLabel3.Location = new Point(550, 148);
+            toLabel3.Location = new Point(550, 166);
             toLabel3.Name = "toLabel3";
             toLabel3.Size = new Size(19, 15);
             toLabel3.TabIndex = 26;
@@ -316,10 +316,10 @@
             // newButton
             // 
             newButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            newButton.Location = new Point(706, 169);
+            newButton.Location = new Point(857, 59);
             newButton.Name = "newButton";
             newButton.Size = new Size(75, 29);
-            newButton.TabIndex = 12;
+            newButton.TabIndex = 13;
             newButton.Text = "付箋追加";
             newButton.UseVisualStyleBackColor = true;
             newButton.Click += NewButton_Click;
@@ -328,7 +328,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(874, 501);
+            ClientSize = new Size(944, 509);
             Controls.Add(newButton);
             Controls.Add(toLabel3);
             Controls.Add(toLabel2);
@@ -357,7 +357,7 @@
             Controls.Add(issueTypeCheckedListBox);
             Controls.Add(titleSearchTextBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(890, 540);
+            MinimumSize = new Size(960, 548);
             Name = "ListForm";
             Text = "MarkStickyNotes - 検索";
             Load += ListForm_Load;
