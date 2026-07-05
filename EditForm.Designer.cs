@@ -112,10 +112,10 @@
             // 
             statusComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             statusComboBox.FormattingEnabled = true;
-            statusComboBox.Location = new Point(247, 50);
+            statusComboBox.Location = new Point(450, 50);
             statusComboBox.Name = "statusComboBox";
             statusComboBox.Size = new Size(130, 23);
-            statusComboBox.TabIndex = 4;
+            statusComboBox.TabIndex = 5;
             // 
             // closeButton
             // 
@@ -136,7 +136,7 @@
             startDatePicker.Name = "startDatePicker";
             startDatePicker.ShowCheckBox = true;
             startDatePicker.Size = new Size(122, 23);
-            startDatePicker.TabIndex = 8;
+            startDatePicker.TabIndex = 7;
             // 
             // dueDatePicker
             // 
@@ -146,12 +146,12 @@
             dueDatePicker.Name = "dueDatePicker";
             dueDatePicker.ShowCheckBox = true;
             dueDatePicker.Size = new Size(122, 23);
-            dueDatePicker.TabIndex = 9;
+            dueDatePicker.TabIndex = 8;
             // 
             // statusLabel
             // 
             statusLabel.AutoSize = true;
-            statusLabel.Location = new Point(203, 53);
+            statusLabel.Location = new Point(406, 53);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(34, 15);
             statusLabel.TabIndex = 12;
@@ -189,25 +189,25 @@
             // 
             issueTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             issueTypeComboBox.FormattingEnabled = true;
-            issueTypeComboBox.Location = new Point(56, 50);
+            issueTypeComboBox.Location = new Point(52, 50);
             issueTypeComboBox.Name = "issueTypeComboBox";
-            issueTypeComboBox.Size = new Size(130, 23);
+            issueTypeComboBox.Size = new Size(134, 23);
             issueTypeComboBox.TabIndex = 3;
             // 
             // assigneeComboBox
             // 
             assigneeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             assigneeComboBox.FormattingEnabled = true;
-            assigneeComboBox.Location = new Point(450, 50);
+            assigneeComboBox.Location = new Point(255, 50);
             assigneeComboBox.Name = "assigneeComboBox";
-            assigneeComboBox.Size = new Size(130, 23);
-            assigneeComboBox.TabIndex = 5;
+            assigneeComboBox.Size = new Size(122, 23);
+            assigneeComboBox.TabIndex = 4;
             // 
             // categoryComboBox
             // 
             categoryComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             categoryComboBox.FormattingEnabled = true;
-            categoryComboBox.Location = new Point(450, 80);
+            categoryComboBox.Location = new Point(653, 50);
             categoryComboBox.Name = "categoryComboBox";
             categoryComboBox.Size = new Size(130, 23);
             categoryComboBox.TabIndex = 6;
@@ -217,10 +217,10 @@
             priorityComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             priorityComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             priorityComboBox.FormattingEnabled = true;
-            priorityComboBox.Location = new Point(653, 50);
+            priorityComboBox.Location = new Point(450, 80);
             priorityComboBox.Name = "priorityComboBox";
             priorityComboBox.Size = new Size(130, 23);
-            priorityComboBox.TabIndex = 7;
+            priorityComboBox.TabIndex = 9;
             // 
             // issueTypeLabel
             // 
@@ -234,7 +234,7 @@
             // assigneeLabel
             // 
             assigneeLabel.AutoSize = true;
-            assigneeLabel.Location = new Point(394, 53);
+            assigneeLabel.Location = new Point(203, 53);
             assigneeLabel.Name = "assigneeLabel";
             assigneeLabel.Size = new Size(46, 15);
             assigneeLabel.TabIndex = 17;
@@ -243,7 +243,7 @@
             // categoryLabel
             // 
             categoryLabel.AutoSize = true;
-            categoryLabel.Location = new Point(395, 83);
+            categoryLabel.Location = new Point(598, 53);
             categoryLabel.Name = "categoryLabel";
             categoryLabel.Size = new Size(45, 15);
             categoryLabel.TabIndex = 18;
@@ -253,7 +253,7 @@
             // 
             priorityLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             priorityLabel.AutoSize = true;
-            priorityLabel.Location = new Point(597, 53);
+            priorityLabel.Location = new Point(394, 83);
             priorityLabel.Name = "priorityLabel";
             priorityLabel.Size = new Size(46, 15);
             priorityLabel.TabIndex = 19;
