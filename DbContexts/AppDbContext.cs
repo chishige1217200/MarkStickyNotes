@@ -71,11 +71,38 @@ namespace MarkStickyNotes.DbContexts
                 }
             );
 
-            modelBuilder.Entity<Category>().HasData(
-                new Category
+            modelBuilder.Entity<IssueType>().HasData(
+                new IssueType
                 {
                     Id = 1,
-                    Name = "未分類",
+                    Name = "バグ",
+                    Order = 1
+                },
+                new IssueType
+                {
+                    Id = 2,
+                    Name = "タスク",
+                    Order = 2
+                },
+                new IssueType
+                {
+                    Id = 3,
+                    Name = "要望",
+                    Order = 3
+                },
+                new IssueType
+                {
+                    Id = 4,
+                    Name = "その他",
+                    Order = 4
+                }
+            );
+
+            modelBuilder.Entity<Assignee>().HasData(
+                new Assignee
+                {
+                    Id = 1,
+                    Name = "あなた",
                     Order = 1
                 }
             );
@@ -104,6 +131,36 @@ namespace MarkStickyNotes.DbContexts
                     Id = 4,
                     Name = "完了",
                     Order = 4
+                }
+            );
+
+            modelBuilder.Entity<Category>().HasData(
+                new Category
+                {
+                    Id = 1,
+                    Name = "未分類",
+                    Order = 1
+                }
+            );
+
+            modelBuilder.Entity<Priority>().HasData(
+                new Priority
+                {
+                    Id = 1,
+                    Name = "高",
+                    Order = 1
+                },
+                new Priority
+                {
+                    Id = 2,
+                    Name = "中",
+                    Order = 2
+                },
+                new Priority
+                {
+                    Id = 3,
+                    Name = "低",
+                    Order = 3
                 }
             );
         }
