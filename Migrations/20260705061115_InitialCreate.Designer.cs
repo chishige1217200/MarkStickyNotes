@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MarkStickyNotes.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260705060242_AddNoteExtendedFields")]
-    partial class AddNoteExtendedFields
+    [Migration("20260705061115_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
