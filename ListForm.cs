@@ -38,7 +38,7 @@ namespace MarkStickyNotes
         private void LoadStatusData()
         {
             using var db = new AppDbContext();
-            var statuses = db.Status.Where(s => !s.IsDeleted).OrderBy(s => s.Order).ToList();
+            var statuses = db.Statuses.Where(s => !s.IsDeleted).OrderBy(s => s.Order).ToList();
 
             statusCheckedListBox.Items.Clear();
             foreach (var status in statuses)
@@ -277,7 +277,7 @@ namespace MarkStickyNotes
                 {
                     Id = n.Id,
                     Subject = n.Subject,
-                    StatusName = db.Status.Where(s => !s.IsDeleted).Where(s => s.Id.ToString() == n.StatusId).Select(s => s.Name).FirstOrDefault() ?? "",
+                    StatusName = db.Statuses.Where(s => !s.IsDeleted).Where(s => s.Id.ToString() == n.StatusId).Select(s => s.Name).FirstOrDefault() ?? "",
                     StartDate = n.StartDate,
                     DueDate = n.DueDate,
                     Updated = n.Updated

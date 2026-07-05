@@ -141,7 +141,7 @@
             searchButton.Location = new Point(713, 106);
             searchButton.Name = "searchButton";
             searchButton.Size = new Size(75, 29);
-            searchButton.TabIndex = 8;
+            searchButton.TabIndex = 9;
             searchButton.Text = "検索";
             searchButton.UseVisualStyleBackColor = true;
             searchButton.Click += SearchButton_Click;
@@ -158,7 +158,7 @@
             resultsDataGridView.ReadOnly = true;
             resultsDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             resultsDataGridView.Size = new Size(776, 293);
-            resultsDataGridView.TabIndex = 9;
+            resultsDataGridView.TabIndex = 10;
             resultsDataGridView.CellDoubleClick += ResultsDataGridView_CellDoubleClick;
             // 
             // titleLabel
@@ -239,7 +239,7 @@
             newButton.Location = new Point(713, 73);
             newButton.Name = "newButton";
             newButton.Size = new Size(75, 29);
-            newButton.TabIndex = 18;
+            newButton.TabIndex = 8;
             newButton.Text = "付箋追加";
             newButton.UseVisualStyleBackColor = true;
             newButton.Click += NewButton_Click;

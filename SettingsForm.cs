@@ -26,7 +26,7 @@ namespace MarkStickyNotes
         private void LoadStatusList()
         {
             using var db = new AppDbContext();
-            var statuses = db.Status
+            var statuses = db.Statuses
                 .Where(s => !s.IsDeleted)
                 .OrderBy(s => s.Order)
                 .ToList();
@@ -52,7 +52,7 @@ namespace MarkStickyNotes
             using var db = new AppDbContext();
 
             // 現在の最大Order値を取得
-            int maxOrder = db.Status
+            int maxOrder = db.Statuses
                 .Where(s => !s.IsDeleted)
                 .Select(s => (int?)s.Order)
                 .Max() ?? 0;
@@ -65,7 +65,7 @@ namespace MarkStickyNotes
                 IsDeleted = false
             };
 
-            db.Status.Add(newStatus);
+            db.Statuses.Add(newStatus);
             db.SaveChanges();
 
             // リストを再読み込み
@@ -94,7 +94,7 @@ namespace MarkStickyNotes
             }
 
             using var db = new AppDbContext();
-            var status = db.Status.Find(selectedStatus.Id);
+            var status = db.Statuses.Find(selectedStatus.Id);
 
             if (status != null)
             {
@@ -162,7 +162,7 @@ namespace MarkStickyNotes
             }
 
             using var db = new AppDbContext();
-            var status = db.Status.Find(selectedStatus.Id);
+            var status = db.Statuses.Find(selectedStatus.Id);
 
             if (status != null)
             {
@@ -190,9 +190,9 @@ namespace MarkStickyNotes
             }
 
             using var db = new AppDbContext();
-            var currentStatus = db.Status.Find(selectedStatus.Id);
+            var currentStatus = db.Statuses.Find(selectedStatus.Id);
             var previousStatus = statusListBox.Items[selectedIndex - 1] as Status;
-            var previousStatusDb = db.Status.Find(previousStatus!.Id);
+            var previousStatusDb = db.Statuses.Find(previousStatus!.Id);
 
             if (currentStatus != null && previousStatusDb != null)
             {
@@ -226,9 +226,9 @@ namespace MarkStickyNotes
             }
 
             using var db = new AppDbContext();
-            var currentStatus = db.Status.Find(selectedStatus.Id);
+            var currentStatus = db.Statuses.Find(selectedStatus.Id);
             var nextStatus = statusListBox.Items[selectedIndex + 1] as Status;
-            var nextStatusDb = db.Status.Find(nextStatus!.Id);
+            var nextStatusDb = db.Statuses.Find(nextStatus!.Id);
 
             if (currentStatus != null && nextStatusDb != null)
             {

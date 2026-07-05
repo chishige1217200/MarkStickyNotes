@@ -74,7 +74,7 @@
             markdownRichTextBox.Location = new Point(12, 80);
             markdownRichTextBox.Name = "markdownRichTextBox";
             markdownRichTextBox.Size = new Size(776, 358);
-            markdownRichTextBox.TabIndex = 2;
+            markdownRichTextBox.TabIndex = 7;
             markdownRichTextBox.Text = "";
             // 
             // webView
@@ -82,11 +82,11 @@
             webView.AllowExternalDrop = true;
             webView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             webView.CreationProperties = null;
-            webView.DefaultBackgroundColor = System.Drawing.Color.White;
+            webView.DefaultBackgroundColor = Color.White;
             webView.Location = new Point(12, 80);
             webView.Name = "webView";
             webView.Size = new Size(776, 358);
-            webView.TabIndex = 3;
+            webView.TabIndex = 7;
             webView.ZoomFactor = 1D;
             // 
             // colorComboBox
@@ -97,7 +97,7 @@
             colorComboBox.Location = new Point(696, 50);
             colorComboBox.Name = "colorComboBox";
             colorComboBox.Size = new Size(92, 23);
-            colorComboBox.TabIndex = 7;
+            colorComboBox.TabIndex = 6;
             colorComboBox.SelectedIndexChanged += ColorComboBox_SelectedIndexChanged;
             // 
             // statusComboBox
@@ -107,7 +107,7 @@
             statusComboBox.Location = new Point(56, 50);
             statusComboBox.Name = "statusComboBox";
             statusComboBox.Size = new Size(100, 23);
-            statusComboBox.TabIndex = 4;
+            statusComboBox.TabIndex = 3;
             // 
             // closeButton
             // 
@@ -128,7 +128,7 @@
             startDatePicker.Name = "startDatePicker";
             startDatePicker.ShowCheckBox = true;
             startDatePicker.Size = new Size(150, 23);
-            startDatePicker.TabIndex = 5;
+            startDatePicker.TabIndex = 4;
             // 
             // dueDatePicker
             // 
@@ -138,14 +138,14 @@
             dueDatePicker.Name = "dueDatePicker";
             dueDatePicker.ShowCheckBox = true;
             dueDatePicker.Size = new Size(150, 23);
-            dueDatePicker.TabIndex = 6;
+            dueDatePicker.TabIndex = 5;
             // 
             // statusLabel
             // 
             statusLabel.AutoSize = true;
             statusLabel.Location = new Point(12, 53);
             statusLabel.Name = "statusLabel";
-            statusLabel.Size = new Size(38, 15);
+            statusLabel.Size = new Size(34, 15);
             statusLabel.TabIndex = 8;
             statusLabel.Text = "状態:";
             // 
@@ -154,7 +154,7 @@
             startDateLabel.AutoSize = true;
             startDateLabel.Location = new Point(162, 53);
             startDateLabel.Name = "startDateLabel";
-            startDateLabel.Size = new Size(58, 15);
+            startDateLabel.Size = new Size(46, 15);
             startDateLabel.TabIndex = 9;
             startDateLabel.Text = "開始日:";
             // 
@@ -163,7 +163,7 @@
             dueDateLabel.AutoSize = true;
             dueDateLabel.Location = new Point(382, 53);
             dueDateLabel.Name = "dueDateLabel";
-            dueDateLabel.Size = new Size(58, 15);
+            dueDateLabel.Size = new Size(46, 15);
             dueDateLabel.TabIndex = 10;
             dueDateLabel.Text = "期限日:";
             // 
@@ -173,7 +173,7 @@
             colorLabel.AutoSize = true;
             colorLabel.Location = new Point(666, 53);
             colorLabel.Name = "colorLabel";
-            colorLabel.Size = new Size(24, 15);
+            colorLabel.Size = new Size(22, 15);
             colorLabel.TabIndex = 11;
             colorLabel.Text = "色:";
             // 
@@ -195,7 +195,6 @@
             Controls.Add(markdownRichTextBox);
             Controls.Add(editButton);
             Controls.Add(titleTextBox);
-            FormBorderStyle = FormBorderStyle.Sizable;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(400, 300);
             Name = "EditForm";

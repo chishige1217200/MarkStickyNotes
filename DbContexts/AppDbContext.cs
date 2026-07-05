@@ -8,7 +8,11 @@ namespace MarkStickyNotes.DbContexts
     {
         public DbSet<Note> Notes => Set<Note>();
         public DbSet<Color> Colors => Set<Color>();
-        public DbSet<Status> Status => Set<Status>();
+        public DbSet<IssueType> IssueTypes => Set<IssueType>();
+        public DbSet<Assignee> Assignees => Set<Assignee>();
+        public DbSet<Status> Statuses => Set<Status>();
+        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<Priority> Priorities => Set<Priority>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlite("Data Source=database.db");
@@ -64,6 +68,15 @@ namespace MarkStickyNotes.DbContexts
                     Name = "DarkGray",
                     ColorCode = "#4E4E4E",
                     Order = 7
+                }
+            );
+
+            modelBuilder.Entity<Category>().HasData(
+                new Category
+                {
+                    Id = 1,
+                    Name = "未分類",
+                    Order = 1
                 }
             );
 

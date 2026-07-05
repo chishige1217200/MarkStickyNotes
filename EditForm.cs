@@ -81,7 +81,7 @@ namespace MarkStickyNotes
             colorComboBox.DataSource = colors;
 
             // Status ComboBox
-            var statuses = db.Status.Where(s => !s.IsDeleted).OrderBy(s => s.Order).ToList();
+            var statuses = db.Statuses.Where(s => !s.IsDeleted).OrderBy(s => s.Order).ToList();
             statusComboBox.DisplayMember = "Name";
             statusComboBox.ValueMember = "Id";
             statusComboBox.DataSource = statuses;
