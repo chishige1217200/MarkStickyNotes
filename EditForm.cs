@@ -35,7 +35,7 @@ namespace MarkStickyNotes
 
         public EditForm(int noteId) : this()
         {
-            isNewNote = false; // 既存ノートの場合
+            isNewNote = false; // 既存付箋の場合
             LoadNote(noteId);
         }
 
@@ -61,7 +61,7 @@ namespace MarkStickyNotes
             }
             else
             {
-                // 既存ノートの場合、初期化完了後にレンダリング
+                // 既存付箋の場合、初期化完了後にレンダリング
                 if (!isEditMode)
                 {
                     RenderMarkdown();
@@ -80,20 +80,60 @@ namespace MarkStickyNotes
             colorComboBox.ValueMember = "Id";
             colorComboBox.DataSource = colors;
 
+            // IssueType ComboBox
+            var issueTypes = db.IssueTypes.Where(i => !i.IsDeleted).OrderBy(i => i.Order).ToList();
+            issueTypeComboBox.DisplayMember = "Name";
+            issueTypeComboBox.ValueMember = "Id";
+            issueTypeComboBox.DataSource = issueTypes;
+
+            // Assignee ComboBox
+            var assignees = db.Assignees.Where(a => !a.IsDeleted).OrderBy(a => a.Order).ToList();
+            assigneeComboBox.DisplayMember = "Name";
+            assigneeComboBox.ValueMember = "Id";
+            assigneeComboBox.DataSource = assignees;
+
             // Status ComboBox
             var statuses = db.Statuses.Where(s => !s.IsDeleted).OrderBy(s => s.Order).ToList();
             statusComboBox.DisplayMember = "Name";
             statusComboBox.ValueMember = "Id";
             statusComboBox.DataSource = statuses;
 
+            // Category ComboBox
+            var categories = db.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.Order).ToList();
+            categoryComboBox.DisplayMember = "Name";
+            categoryComboBox.ValueMember = "Id";
+            categoryComboBox.DataSource = categories;
+
+            // Priority ComboBox
+            var priorities = db.Priorities.Where(p => !p.IsDeleted).OrderBy(p => p.Order).ToList();
+            priorityComboBox.DisplayMember = "Name";
+            priorityComboBox.ValueMember = "Id";
+            priorityComboBox.DataSource = priorities;
+
             // デフォルトを選択
             if (colors.Count > 0)
             {
                 colorComboBox.SelectedIndex = 0;
             }
+            if (issueTypes.Count > 0)
+            {
+                issueTypeComboBox.SelectedIndex = 0;
+            }
+            if (assignees.Count > 0)
+            {
+                assigneeComboBox.SelectedIndex = 0;
+            }
             if (statuses.Count > 0)
             {
                 statusComboBox.SelectedIndex = 0;
+            }
+            if (categories.Count > 0)
+            {
+                categoryComboBox.SelectedIndex = 0;
+            }
+            if (priorities.Count > 0)
+            {
+                priorityComboBox.SelectedIndex = 0;
             }
         }
 
@@ -115,7 +155,7 @@ namespace MarkStickyNotes
             set => markdownRichTextBox.Text = value;
         }
 
-        // 既存のノートを読み込む
+        // 既存の付箋を読み込む
         public void LoadNote(int noteId)
         {
             using var db = new AppDbContext();
@@ -146,9 +186,25 @@ namespace MarkStickyNotes
                         catch { }
                     }
                 }
+                if (!string.IsNullOrEmpty(currentNote.IssueTypeId) && int.TryParse(currentNote.IssueTypeId, out int issueTypeId))
+                {
+                    issueTypeComboBox.SelectedValue = issueTypeId;
+                }
+                if (!string.IsNullOrEmpty(currentNote.AssigneeId) && int.TryParse(currentNote.AssigneeId, out int assigneeId))
+                {
+                    assigneeComboBox.SelectedValue = assigneeId;
+                }
                 if (!string.IsNullOrEmpty(currentNote.StatusId) && int.TryParse(currentNote.StatusId, out int statusId))
                 {
                     statusComboBox.SelectedValue = statusId;
+                }
+                if (!string.IsNullOrEmpty(currentNote.CategoryId) && int.TryParse(currentNote.CategoryId, out int categoryId))
+                {
+                    categoryComboBox.SelectedValue = categoryId;
+                }
+                if (!string.IsNullOrEmpty(currentNote.PriorityId) && int.TryParse(currentNote.PriorityId, out int priorityId))
+                {
+                    priorityComboBox.SelectedValue = priorityId;
                 }
 
                 // 開始日と期限日を設定
@@ -176,12 +232,12 @@ namespace MarkStickyNotes
             }
             else
             {
-                // ノートが見つからない場合は新規作成
+                // 付箋が見つからない場合は新規作成
                 CreateNewNote();
             }
         }
 
-        // 新規ノートを作成
+        // 新規付箋を作成
         public void CreateNewNote()
         {
             currentNote = new Note
@@ -189,7 +245,11 @@ namespace MarkStickyNotes
                 Subject = "",
                 ContentFileName = "",
                 ColorId = colorComboBox.SelectedValue?.ToString() ?? "1",
+                IssueTypeId = issueTypeComboBox.SelectedValue?.ToString() ?? "1",
+                AssigneeId = assigneeComboBox.SelectedValue?.ToString() ?? "1",
                 StatusId = statusComboBox.SelectedValue?.ToString() ?? "1",
+                CategoryId = categoryComboBox.SelectedValue?.ToString() ?? "1",
+                PriorityId = priorityComboBox.SelectedValue?.ToString() ?? "1",
                 Created = DateTime.Now,
                 Updated = DateTime.Now
             };
@@ -245,7 +305,11 @@ namespace MarkStickyNotes
 
                 // コントロールを有効化
                 colorComboBox.Enabled = true;
+                issueTypeComboBox.Enabled = true;
+                assigneeComboBox.Enabled = true;
                 statusComboBox.Enabled = true;
+                categoryComboBox.Enabled = true;
+                priorityComboBox.Enabled = true;
                 startDatePicker.Enabled = true;
                 dueDatePicker.Enabled = true;
 
@@ -262,7 +326,11 @@ namespace MarkStickyNotes
 
                 // コントロールを無効化
                 colorComboBox.Enabled = false;
+                issueTypeComboBox.Enabled = false;
+                assigneeComboBox.Enabled = false;
                 statusComboBox.Enabled = false;
+                categoryComboBox.Enabled = false;
+                priorityComboBox.Enabled = false;
                 startDatePicker.Enabled = false;
                 dueDatePicker.Enabled = false;
 
@@ -389,7 +457,7 @@ namespace MarkStickyNotes
             webView.NavigateToString(fullHtml);
         }
 
-        // ノートを保存
+        // 付箋を保存
         private void SaveNote()
         {
             if (currentNote == null) return;
@@ -402,7 +470,11 @@ namespace MarkStickyNotes
 
             // Color と Status を保存
             currentNote.ColorId = colorComboBox.SelectedValue?.ToString() ?? "";
+            currentNote.IssueTypeId = issueTypeComboBox.SelectedValue?.ToString() ?? "";
+            currentNote.AssigneeId = assigneeComboBox.SelectedValue?.ToString() ?? "";
             currentNote.StatusId = statusComboBox.SelectedValue?.ToString() ?? "";
+            currentNote.CategoryId = categoryComboBox.SelectedValue?.ToString() ?? "";
+            currentNote.PriorityId = priorityComboBox.SelectedValue?.ToString() ?? "";
 
             // 開始日と期限日を保存（時分秒は00:00:00として保存）
             currentNote.StartDate = startDatePicker.Checked ? startDatePicker.Value.Date : null;
@@ -479,10 +551,10 @@ namespace MarkStickyNotes
         // 削除ボタンのクリックイベント
         private void CloseButton_Click(object sender, EventArgs e)
         {
-            // 新規作成中またはノートが存在しない場合は何もしない
+            // 新規作成中または付箋が存在しない場合は何もしない
             if (currentNote == null || currentNote.Id == 0)
             {
-                MessageBox.Show("削除できるノートがありません。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("削除できる付箋がありません。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -561,10 +633,10 @@ namespace MarkStickyNotes
                 return;
             }
 
-            // ノートが保存されていない場合は先に保存
+            // 付箋が保存されていない場合は先に保存
             if (currentNote == null || string.IsNullOrEmpty(currentNote.ContentFileName))
             {
-                MessageBox.Show("ファイルを添付する前にノートを一度保存してください。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("ファイルを添付する前に付箋を一度保存してください。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 

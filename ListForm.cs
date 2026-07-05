@@ -216,7 +216,7 @@ namespace MarkStickyNotes
         {
             using var db = new AppDbContext();
 
-            // クエリの基本部分（削除されていないノート）
+            // クエリの基本部分（削除されていない付箋）
             IQueryable<Note> query = db.Notes.Where(n => !n.IsDeleted);
 
             // タイトル検索
@@ -309,7 +309,7 @@ namespace MarkStickyNotes
             // ヘッダー行のクリックは無視
             if (e.RowIndex < 0) return;
 
-            // 選択された行からノートIDを取得
+            // 選択された行から付箋IDを取得
             var row = resultsDataGridView.Rows[e.RowIndex];
             if (row.Cells["Id"].Value is int noteId)
             {
