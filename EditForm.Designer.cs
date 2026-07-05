@@ -189,9 +189,9 @@
             // 
             issueTypeComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             issueTypeComboBox.FormattingEnabled = true;
-            issueTypeComboBox.Location = new Point(52, 50);
+            issueTypeComboBox.Location = new Point(64, 50);
             issueTypeComboBox.Name = "issueTypeComboBox";
-            issueTypeComboBox.Size = new Size(134, 23);
+            issueTypeComboBox.Size = new Size(122, 23);
             issueTypeComboBox.TabIndex = 3;
             // 
             // assigneeComboBox
@@ -225,7 +225,7 @@
             // issueTypeLabel
             // 
             issueTypeLabel.AutoSize = true;
-            issueTypeLabel.Location = new Point(12, 53);
+            issueTypeLabel.Location = new Point(24, 53);
             issueTypeLabel.Name = "issueTypeLabel";
             issueTypeLabel.Size = new Size(34, 15);
             issueTypeLabel.TabIndex = 16;
