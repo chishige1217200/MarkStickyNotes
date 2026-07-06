@@ -444,20 +444,22 @@ namespace MarkStickyNotes
 
             // currentResultsに保存
             currentResults = new BindingList<NoteSearchResult>(results);
-            resultsDataGridView.DataSource = currentResults;
 
-            // ソート状態をリセット
-            currentSortColumn = "Updated";
-            currentSortDirection = ListSortDirection.Descending;
+            // 現在のソート順を適用
+            SortResults();
 
             // ソートインジケーターを表示
             foreach (DataGridViewColumn col in resultsDataGridView.Columns)
             {
                 col.HeaderCell.SortGlyphDirection = SortOrder.None;
             }
-            if (resultsDataGridView.Columns["Updated"] != null)
+            var sortedColumn = resultsDataGridView.Columns.Cast<DataGridViewColumn>()
+                .FirstOrDefault(c => c.DataPropertyName == currentSortColumn);
+            if (sortedColumn != null)
             {
-                resultsDataGridView.Columns["Updated"].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                sortedColumn.HeaderCell.SortGlyphDirection = currentSortDirection == ListSortDirection.Ascending
+                    ? SortOrder.Ascending
+                    : SortOrder.Descending;
             }
         }
 
