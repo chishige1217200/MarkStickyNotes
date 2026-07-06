@@ -659,15 +659,18 @@ namespace MarkStickyNotes
                         var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
                         string markdownLink;
 
+                        // パスに空白が含まれる場合は<>で囲む
+                        var formattedPath = relativePath.Contains(' ') ? $"<{relativePath}>" : relativePath;
+
                         if (imageExtensions.Contains(extension))
                         {
                             // 画像の場合
-                            markdownLink = $"![]({relativePath})";
+                            markdownLink = $"![]({formattedPath})";
                         }
                         else
                         {
                             // その他のファイルの場合
-                            markdownLink = $"[{fileName}]({relativePath})";
+                            markdownLink = $"[{fileName}]({formattedPath})";
                         }
 
                         insertTexts.Add(markdownLink);
