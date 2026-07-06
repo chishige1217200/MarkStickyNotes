@@ -137,12 +137,12 @@ namespace MarkStickyNotes
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
 
-            // タイトル列（画面幅に合わせて伸縮）
+            // 件名列（画面幅に合わせて伸縮）
             resultsDataGridView.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "Subject",
                 DataPropertyName = "Subject",
-                HeaderText = "タイトル",
+                HeaderText = "件名",
                 Width = 250,
                 MinimumWidth = 150,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
@@ -339,7 +339,7 @@ namespace MarkStickyNotes
             // クエリの基本部分（削除されていない付箋）
             IQueryable<Note> query = db.Notes.Where(n => !n.IsDeleted);
 
-            // タイトル検索
+            // 件名検索
             if (!string.IsNullOrWhiteSpace(titleSearchTextBox.Text))
             {
                 var titleKeyword = titleSearchTextBox.Text.Trim();

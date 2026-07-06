@@ -64,7 +64,7 @@
             titleSearchTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             titleSearchTextBox.Location = new Point(80, 12);
             titleSearchTextBox.Name = "titleSearchTextBox";
-            titleSearchTextBox.PlaceholderText = "タイトルで検索";
+            titleSearchTextBox.PlaceholderText = "件名で検索";
             titleSearchTextBox.Size = new Size(852, 23);
             titleSearchTextBox.TabIndex = 0;
             // 
@@ -208,11 +208,11 @@
             // titleLabel
             // 
             titleLabel.AutoSize = true;
-            titleLabel.Location = new Point(12, 15);
+            titleLabel.Location = new Point(24, 15);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new Size(55, 15);
+            titleLabel.Size = new Size(43, 15);
             titleLabel.TabIndex = 15;
-            titleLabel.Text = "タイトル：";
+            titleLabel.Text = "件名：";
             // 
             // issueTypeLabel
             // 

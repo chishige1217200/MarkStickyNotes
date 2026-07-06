@@ -59,7 +59,7 @@
             titleTextBox.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold);
             titleTextBox.Location = new Point(12, 12);
             titleTextBox.Name = "titleTextBox";
-            titleTextBox.PlaceholderText = "タイトル";
+            titleTextBox.PlaceholderText = "件名";
             titleTextBox.Size = new Size(735, 29);
             titleTextBox.TabIndex = 0;
             // 
