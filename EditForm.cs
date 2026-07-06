@@ -743,5 +743,34 @@ namespace MarkStickyNotes
                 MessageBox.Show($"ファイルを開けませんでした: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void EditForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F2)
+            {
+                if (!isEditMode)
+                {
+                    // 閲覧モードでF2キーが押された場合は編集モードに切り替え
+                    SetViewMode(true);
+                }
+            }
+            if (e.KeyCode == Keys.Escape)
+            {
+                if (!isEditMode)
+                {
+                    // 閲覧モードでEscキーが押された場合はフォームを閉じる
+                    this.Close();
+                }
+            }
+            if (e.Control && e.KeyCode == Keys.S)
+            {
+                if (isEditMode)
+                {
+                    // 編集モードでCtrl+Sが押された場合は保存
+                    SaveNote();
+                    SetViewMode(false);
+                }
+            }
+        }
     }
 }

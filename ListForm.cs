@@ -489,5 +489,25 @@ namespace MarkStickyNotes
             var editForm = new EditForm();
             editForm.Show();
         }
+
+        // キーボードショートカットの処理
+        private void ListForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5)
+            {
+                // F5 キーで検索をリフレッシュ
+                ListForm_Load(sender, e);
+            }
+            if (e.KeyCode == Keys.Enter)
+            {
+                // Enter キーで検索を実行
+                PerformSearch();
+            }
+            if (e.Control && e.KeyCode == Keys.N)
+            {
+                // Ctrl + N で新規付箋作成
+                ShowNote();
+            }
+        }
     }
 }

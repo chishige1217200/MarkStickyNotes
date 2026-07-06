@@ -358,10 +358,12 @@
             Controls.Add(issueTypeCheckedListBox);
             Controls.Add(titleSearchTextBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             MinimumSize = new Size(960, 548);
             Name = "ListForm";
             Text = "MarkStickyNotes - 検索";
             Load += ListForm_Load;
+            KeyDown += ListForm_KeyDown;
             ((System.ComponentModel.ISupportInitialize)resultsDataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();

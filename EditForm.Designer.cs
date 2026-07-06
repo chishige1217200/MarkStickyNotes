@@ -286,9 +286,11 @@
             Controls.Add(editButton);
             Controls.Add(titleTextBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             MinimumSize = new Size(960, 540);
             Name = "EditForm";
             Text = "MarkStickyNotes";
+            KeyDown += EditForm_KeyDown;
             MouseDown += EditForm_MouseDown;
             MouseMove += EditForm_MouseMove;
             ((System.ComponentModel.ISupportInitialize)webView).EndInit();
