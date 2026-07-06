@@ -195,7 +195,8 @@
             resultsDataGridView.AllowUserToAddRows = false;
             resultsDataGridView.AllowUserToDeleteRows = false;
             resultsDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            resultsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            resultsDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+            resultsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             resultsDataGridView.Location = new Point(12, 222);
             resultsDataGridView.MultiSelect = false;
             resultsDataGridView.Name = "resultsDataGridView";

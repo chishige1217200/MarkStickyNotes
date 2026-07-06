@@ -14,6 +14,8 @@ namespace MarkStickyNotes
         public ListForm()
         {
             InitializeComponent();
+
+            typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, resultsDataGridView, new object[] { true });
         }
 
         private void ListForm_Load(object sender, EventArgs e)
