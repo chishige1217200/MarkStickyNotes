@@ -48,7 +48,7 @@ namespace MarkStickyNotes
                 Visible = true
             };
 
-            _notifyIcon.DoubleClick += (_, _) => ShowList();
+            _notifyIcon.Click += (_, _) => ShowList();
 
             ShowList();
         }
@@ -90,6 +90,16 @@ namespace MarkStickyNotes
                 _settingsForm.FormClosed += (_, _) =>
                 {
                     _settingsForm = null;
+                };
+
+                // 設定変更イベントを購読
+                _settingsForm.SettingsChanged += (_, _) =>
+                {
+                    // ListFormが開かれている場合、検索条件リストを更新
+                    if (_listForm != null && !_listForm.IsDisposed)
+                    {
+                        _listForm.RefreshSearchConditionLists();
+                    }
                 };
             }
 

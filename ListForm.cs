@@ -14,6 +14,8 @@ namespace MarkStickyNotes
         public ListForm()
         {
             InitializeComponent();
+
+            typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, resultsDataGridView, new object[] { true });
         }
 
         private void ListForm_Load(object sender, EventArgs e)
@@ -45,6 +47,9 @@ namespace MarkStickyNotes
         // IssueType データを CheckedListBox に読み込む
         private void LoadIssueTypeData()
         {
+            // 現在の選択状態を保存
+            var selectedIds = issueTypeCheckedListBox.CheckedItems.Cast<IssueType>().Select(i => i.Id).ToList();
+
             using var db = new AppDbContext();
             var issueTypes = db.IssueTypes.Where(i => !i.IsDeleted).OrderBy(i => i.Order).ToList();
 
@@ -55,11 +60,24 @@ namespace MarkStickyNotes
             }
             issueTypeCheckedListBox.DisplayMember = "Name";
             issueTypeCheckedListBox.ValueMember = "Id";
+
+            // 選択状態を復元
+            for (int i = 0; i < issueTypeCheckedListBox.Items.Count; i++)
+            {
+                var item = (IssueType)issueTypeCheckedListBox.Items[i];
+                if (selectedIds.Contains(item.Id))
+                {
+                    issueTypeCheckedListBox.SetItemChecked(i, true);
+                }
+            }
         }
 
         // Assignee データを CheckedListBox に読み込む
         private void LoadAssigneeData()
         {
+            // 現在の選択状態を保存
+            var selectedIds = assigneeCheckedListBox.CheckedItems.Cast<Assignee>().Select(a => a.Id).ToList();
+
             using var db = new AppDbContext();
             var assignees = db.Assignees.Where(a => !a.IsDeleted).OrderBy(a => a.Order).ToList();
 
@@ -70,11 +88,24 @@ namespace MarkStickyNotes
             }
             assigneeCheckedListBox.DisplayMember = "Name";
             assigneeCheckedListBox.ValueMember = "Id";
+
+            // 選択状態を復元
+            for (int i = 0; i < assigneeCheckedListBox.Items.Count; i++)
+            {
+                var item = (Assignee)assigneeCheckedListBox.Items[i];
+                if (selectedIds.Contains(item.Id))
+                {
+                    assigneeCheckedListBox.SetItemChecked(i, true);
+                }
+            }
         }
 
         // Status データを CheckedListBox に読み込む
         private void LoadStatusData()
         {
+            // 現在の選択状態を保存
+            var selectedIds = statusCheckedListBox.CheckedItems.Cast<Status>().Select(s => s.Id).ToList();
+
             using var db = new AppDbContext();
             var statuses = db.Statuses.Where(s => !s.IsDeleted).OrderBy(s => s.Order).ToList();
 
@@ -85,11 +116,24 @@ namespace MarkStickyNotes
             }
             statusCheckedListBox.DisplayMember = "Name";
             statusCheckedListBox.ValueMember = "Id";
+
+            // 選択状態を復元
+            for (int i = 0; i < statusCheckedListBox.Items.Count; i++)
+            {
+                var item = (Status)statusCheckedListBox.Items[i];
+                if (selectedIds.Contains(item.Id))
+                {
+                    statusCheckedListBox.SetItemChecked(i, true);
+                }
+            }
         }
 
         // Category データを CheckedListBox に読み込む
         private void LoadCategoryData()
         {
+            // 現在の選択状態を保存
+            var selectedIds = categoryCheckedListBox.CheckedItems.Cast<Category>().Select(c => c.Id).ToList();
+
             using var db = new AppDbContext();
             var categories = db.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.Order).ToList();
 
@@ -100,11 +144,24 @@ namespace MarkStickyNotes
             }
             categoryCheckedListBox.DisplayMember = "Name";
             categoryCheckedListBox.ValueMember = "Id";
+
+            // 選択状態を復元
+            for (int i = 0; i < categoryCheckedListBox.Items.Count; i++)
+            {
+                var item = (Category)categoryCheckedListBox.Items[i];
+                if (selectedIds.Contains(item.Id))
+                {
+                    categoryCheckedListBox.SetItemChecked(i, true);
+                }
+            }
         }
 
         // Priority データを CheckedListBox に読み込む
         private void LoadPriorityData()
         {
+            // 現在の選択状態を保存
+            var selectedIds = priorityCheckedListBox.CheckedItems.Cast<Priority>().Select(p => p.Id).ToList();
+
             using var db = new AppDbContext();
             var priorities = db.Priorities.Where(p => !p.IsDeleted).OrderBy(p => p.Order).ToList();
 
@@ -115,6 +172,26 @@ namespace MarkStickyNotes
             }
             priorityCheckedListBox.DisplayMember = "Name";
             priorityCheckedListBox.ValueMember = "Id";
+
+            // 選択状態を復元
+            for (int i = 0; i < priorityCheckedListBox.Items.Count; i++)
+            {
+                var item = (Priority)priorityCheckedListBox.Items[i];
+                if (selectedIds.Contains(item.Id))
+                {
+                    priorityCheckedListBox.SetItemChecked(i, true);
+                }
+            }
+        }
+
+        // 検索条件のリストを更新（外部から呼び出し可能）
+        public void RefreshSearchConditionLists()
+        {
+            LoadIssueTypeData();
+            LoadAssigneeData();
+            LoadStatusData();
+            LoadCategoryData();
+            LoadPriorityData();
         }
 
         // DataGridView の列を初期化
@@ -137,12 +214,12 @@ namespace MarkStickyNotes
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.None
             });
 
-            // タイトル列（画面幅に合わせて伸縮）
+            // 件名列（画面幅に合わせて伸縮）
             resultsDataGridView.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "Subject",
                 DataPropertyName = "Subject",
-                HeaderText = "タイトル",
+                HeaderText = "件名",
                 Width = 250,
                 MinimumWidth = 150,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
@@ -277,11 +354,9 @@ namespace MarkStickyNotes
         // 検索結果をソート
         private void SortResults()
         {
-            if (currentResults == null || currentResults.Count == 0) return;
-
             List<NoteSearchResult> sortedList = currentSortDirection == ListSortDirection.Ascending
-                ? SortAscending(currentResults.ToList(), currentSortColumn)
-                : SortDescending(currentResults.ToList(), currentSortColumn);
+                ? SortAscending((currentResults ?? new BindingList<NoteSearchResult>()).ToList(), currentSortColumn)
+                : SortDescending((currentResults ?? new BindingList<NoteSearchResult>()).ToList(), currentSortColumn);
 
             currentResults = new BindingList<NoteSearchResult>(sortedList);
             resultsDataGridView.DataSource = currentResults;
@@ -339,7 +414,7 @@ namespace MarkStickyNotes
             // クエリの基本部分（削除されていない付箋）
             IQueryable<Note> query = db.Notes.Where(n => !n.IsDeleted);
 
-            // タイトル検索
+            // 件名検索
             if (!string.IsNullOrWhiteSpace(titleSearchTextBox.Text))
             {
                 var titleKeyword = titleSearchTextBox.Text.Trim();
@@ -442,20 +517,22 @@ namespace MarkStickyNotes
 
             // currentResultsに保存
             currentResults = new BindingList<NoteSearchResult>(results);
-            resultsDataGridView.DataSource = currentResults;
 
-            // ソート状態をリセット
-            currentSortColumn = "Updated";
-            currentSortDirection = ListSortDirection.Descending;
+            // 現在のソート順を適用
+            SortResults();
 
             // ソートインジケーターを表示
             foreach (DataGridViewColumn col in resultsDataGridView.Columns)
             {
                 col.HeaderCell.SortGlyphDirection = SortOrder.None;
             }
-            if (resultsDataGridView.Columns["Updated"] != null)
+            var sortedColumn = resultsDataGridView.Columns.Cast<DataGridViewColumn>()
+                .FirstOrDefault(c => c.DataPropertyName == currentSortColumn);
+            if (sortedColumn != null)
             {
-                resultsDataGridView.Columns["Updated"].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                sortedColumn.HeaderCell.SortGlyphDirection = currentSortDirection == ListSortDirection.Ascending
+                    ? SortOrder.Ascending
+                    : SortOrder.Descending;
             }
         }
 
@@ -486,6 +563,21 @@ namespace MarkStickyNotes
             // EditFormを開く
             var editForm = new EditForm();
             editForm.Show();
+        }
+
+        // キーボードショートカットの処理
+        private void ListForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                // Enter キーで検索を実行
+                PerformSearch();
+            }
+            if (e.Control && e.KeyCode == Keys.N)
+            {
+                // Ctrl + N で新規付箋作成
+                ShowNote();
+            }
         }
     }
 }

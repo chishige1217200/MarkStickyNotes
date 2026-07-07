@@ -25,7 +25,7 @@ namespace MarkStickyNotes
             LoadComboBoxData();
             InitializeWebView();
 
-            // タイトルの変更を監視
+            // 件名の変更を監視
             titleTextBox.TextChanged += TitleTextBox_TextChanged;
 
             // ドラッグ&ドロップイベントハンドラを登録
@@ -137,7 +137,7 @@ namespace MarkStickyNotes
             }
         }
 
-        // タイトルを取得・設定するプロパティ
+        // 件名を取得・設定するプロパティ
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string Title
@@ -162,7 +162,7 @@ namespace MarkStickyNotes
             currentNote = db.Notes.FirstOrDefault(n => n.Id == noteId && !n.IsDeleted);
             if (currentNote != null)
             {
-                Text += $" - id: {noteId}"; // フォームタイトルを変更
+                Text += $" - id: {noteId}"; // フォーム件名を変更
                 titleTextBox.Text = currentNote.Subject;
 
                 // ContentManagerからMarkdownを読み込む
@@ -313,7 +313,7 @@ namespace MarkStickyNotes
                 startDatePicker.Enabled = true;
                 dueDatePicker.Enabled = true;
 
-                // タイトルの入力状態をチェック
+                // 件名の入力状態をチェック
                 UpdateSaveButtonState();
             }
             else
@@ -464,7 +464,7 @@ namespace MarkStickyNotes
 
             using var db = new AppDbContext();
 
-            // タイトルを更新
+            // 件名を更新
             currentNote.Subject = titleTextBox.Text;
             currentNote.Updated = DateTime.Now;
 
@@ -510,10 +510,10 @@ namespace MarkStickyNotes
         //マウスのクリック位置を記憶
         private Point mousePoint;
 
-        //タイトルバー領域のMouseDownイベントハンドラ
+        //件名バー領域のMouseDownイベントハンドラ
         private void EditForm_MouseDown(object sender, MouseEventArgs e)
         {
-            // タイトルバー領域でのみドラッグ移動を有効化（最上部40ピクセル）
+            // 件名バー領域でのみドラッグ移動を有効化（最上部40ピクセル）
             if ((e.Button & MouseButtons.Left) == MouseButtons.Left && e.Y < 40)
             {
                 //位置を記憶する
@@ -521,10 +521,10 @@ namespace MarkStickyNotes
             }
         }
 
-        //タイトルバー領域のMouseMoveイベントハンドラ
+        //件名バー領域のMouseMoveイベントハンドラ
         private void EditForm_MouseMove(object sender, MouseEventArgs e)
         {
-            // タイトルバー領域でのドラッグ移動
+            // 件名バー領域でのドラッグ移動
             if ((e.Button & MouseButtons.Left) == MouseButtons.Left && mousePoint != Point.Empty)
             {
                 this.Left += e.X - mousePoint.X;
@@ -593,7 +593,7 @@ namespace MarkStickyNotes
             }
         }
 
-        // タイトルの入力状態をチェックして保存ボタンの有効/無効を切り替え
+        // 件名の入力状態をチェックして保存ボタンの有効/無効を切り替え
         private void TitleTextBox_TextChanged(object sender, EventArgs e)
         {
             if (isEditMode)
@@ -605,7 +605,7 @@ namespace MarkStickyNotes
         // 保存ボタンの状態を更新
         private void UpdateSaveButtonState()
         {
-            // タイトルが空の場合は保存ボタンを無効化
+            // 件名が空の場合は保存ボタンを無効化
             editButton.Enabled = !string.IsNullOrWhiteSpace(titleTextBox.Text);
         }
 
@@ -659,15 +659,18 @@ namespace MarkStickyNotes
                         var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".webp" };
                         string markdownLink;
 
+                        // パスに空白が含まれる場合は<>で囲む
+                        var formattedPath = relativePath.Contains(' ') ? $"<{relativePath}>" : relativePath;
+
                         if (imageExtensions.Contains(extension))
                         {
                             // 画像の場合
-                            markdownLink = $"![]({relativePath})";
+                            markdownLink = $"![]({formattedPath})";
                         }
                         else
                         {
                             // その他のファイルの場合
-                            markdownLink = $"[{fileName}]({relativePath})";
+                            markdownLink = $"[{fileName}]({formattedPath})";
                         }
 
                         insertTexts.Add(markdownLink);
@@ -738,6 +741,35 @@ namespace MarkStickyNotes
             catch (Exception ex)
             {
                 MessageBox.Show($"ファイルを開けませんでした: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void EditForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F2)
+            {
+                if (!isEditMode)
+                {
+                    // 閲覧モードでF2キーが押された場合は編集モードに切り替え
+                    SetViewMode(true);
+                }
+            }
+            if (e.KeyCode == Keys.Escape)
+            {
+                if (!isEditMode)
+                {
+                    // 閲覧モードでEscキーが押された場合はフォームを閉じる
+                    this.Close();
+                }
+            }
+            if (e.Control && e.KeyCode == Keys.S)
+            {
+                if (isEditMode)
+                {
+                    // 編集モードでCtrl+Sが押された場合は保存
+                    SaveNote();
+                    SetViewMode(false);
+                }
             }
         }
     }

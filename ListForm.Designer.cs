@@ -64,7 +64,7 @@
             titleSearchTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             titleSearchTextBox.Location = new Point(80, 12);
             titleSearchTextBox.Name = "titleSearchTextBox";
-            titleSearchTextBox.PlaceholderText = "タイトルで検索";
+            titleSearchTextBox.PlaceholderText = "件名で検索";
             titleSearchTextBox.Size = new Size(852, 23);
             titleSearchTextBox.TabIndex = 0;
             // 
@@ -195,7 +195,8 @@
             resultsDataGridView.AllowUserToAddRows = false;
             resultsDataGridView.AllowUserToDeleteRows = false;
             resultsDataGridView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            resultsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            resultsDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+            resultsDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             resultsDataGridView.Location = new Point(12, 222);
             resultsDataGridView.MultiSelect = false;
             resultsDataGridView.Name = "resultsDataGridView";
@@ -208,11 +209,11 @@
             // titleLabel
             // 
             titleLabel.AutoSize = true;
-            titleLabel.Location = new Point(12, 15);
+            titleLabel.Location = new Point(24, 15);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new Size(55, 15);
+            titleLabel.Size = new Size(43, 15);
             titleLabel.TabIndex = 15;
-            titleLabel.Text = "タイトル：";
+            titleLabel.Text = "件名：";
             // 
             // issueTypeLabel
             // 
@@ -357,10 +358,12 @@
             Controls.Add(issueTypeCheckedListBox);
             Controls.Add(titleSearchTextBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             MinimumSize = new Size(960, 548);
             Name = "ListForm";
             Text = "MarkStickyNotes - 検索";
             Load += ListForm_Load;
+            KeyDown += ListForm_KeyDown;
             ((System.ComponentModel.ISupportInitialize)resultsDataGridView).EndInit();
             ResumeLayout(false);
             PerformLayout();

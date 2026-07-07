@@ -59,7 +59,7 @@
             titleTextBox.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold);
             titleTextBox.Location = new Point(12, 12);
             titleTextBox.Name = "titleTextBox";
-            titleTextBox.PlaceholderText = "タイトル";
+            titleTextBox.PlaceholderText = "件名";
             titleTextBox.Size = new Size(735, 29);
             titleTextBox.TabIndex = 0;
             // 
@@ -286,9 +286,11 @@
             Controls.Add(editButton);
             Controls.Add(titleTextBox);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             MinimumSize = new Size(960, 540);
             Name = "EditForm";
             Text = "MarkStickyNotes";
+            KeyDown += EditForm_KeyDown;
             MouseDown += EditForm_MouseDown;
             MouseMove += EditForm_MouseMove;
             ((System.ComponentModel.ISupportInitialize)webView).EndInit();

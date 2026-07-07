@@ -21,6 +21,9 @@ namespace MarkStickyNotes
         private Type? _entityType;
         private string _entityDisplayName = string.Empty;
 
+        // データ変更イベント
+        public event EventHandler? DataChanged;
+
         public OrderedEntityEditorControl()
         {
             InitializeComponent();
@@ -131,6 +134,9 @@ namespace MarkStickyNotes
             db.Add(newEntity);
             db.SaveChanges();
 
+            // データ変更イベントを発火
+            DataChanged?.Invoke(this, EventArgs.Empty);
+
             // リストを再読み込み
             LoadEntityList();
 
@@ -163,6 +169,9 @@ namespace MarkStickyNotes
             {
                 entity.Name = newEntityName.Trim();
                 db.SaveChanges();
+
+                // データ変更イベントを発火
+                DataChanged?.Invoke(this, EventArgs.Empty);
 
                 // リストを再読み込み
                 LoadEntityList();
@@ -202,6 +211,9 @@ namespace MarkStickyNotes
                 entity.IsDeleted = true;
                 db.SaveChanges();
 
+                // データ変更イベントを発火
+                DataChanged?.Invoke(this, EventArgs.Empty);
+
                 // リストを再読み込み
                 LoadEntityList();
             }
@@ -234,6 +246,9 @@ namespace MarkStickyNotes
                 previousEntityDb.Order = tempOrder;
 
                 db.SaveChanges();
+
+                // データ変更イベントを発火
+                DataChanged?.Invoke(this, EventArgs.Empty);
 
                 // リストを再読み込み
                 LoadEntityList();
@@ -270,6 +285,9 @@ namespace MarkStickyNotes
                 nextEntityDb.Order = tempOrder;
 
                 db.SaveChanges();
+
+                // データ変更イベントを発火
+                DataChanged?.Invoke(this, EventArgs.Empty);
 
                 // リストを再読み込み
                 LoadEntityList();
