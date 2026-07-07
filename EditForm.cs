@@ -594,7 +594,7 @@ namespace MarkStickyNotes
         }
 
         // 件名の入力状態をチェックして保存ボタンの有効/無効を切り替え
-        private void TitleTextBox_TextChanged(object sender, EventArgs e)
+        private void TitleTextBox_TextChanged(object? sender, EventArgs e)
         {
             if (isEditMode)
             {
@@ -610,7 +610,7 @@ namespace MarkStickyNotes
         }
 
         // ドラッグ開始イベント
-        private void MarkdownRichTextBox_DragEnter(object sender, DragEventArgs e)
+        private void MarkdownRichTextBox_DragEnter(object? sender, DragEventArgs e)
         {
             // ファイルがドラッグされている場合のみ許可
             if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
@@ -624,7 +624,7 @@ namespace MarkStickyNotes
         }
 
         // ドロップイベント
-        private void MarkdownRichTextBox_DragDrop(object sender, DragEventArgs e)
+        private void MarkdownRichTextBox_DragDrop(object? sender, DragEventArgs e)
         {
             // 編集モードでない場合は処理しない
             if (!isEditMode)
