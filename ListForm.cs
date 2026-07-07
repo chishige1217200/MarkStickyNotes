@@ -570,11 +570,6 @@ namespace MarkStickyNotes
         // キーボードショートカットの処理
         private void ListForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.F5)
-            {
-                // F5 キーで検索をリフレッシュ
-                ListForm_Load(sender, e);
-            }
             if (e.KeyCode == Keys.Enter)
             {
                 // Enter キーで検索を実行
