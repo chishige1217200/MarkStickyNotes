@@ -15,7 +15,7 @@ namespace MarkStickyNotes.DbContexts
         public DbSet<Priority> Priorities => Set<Priority>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite("Data Source=database.db");
+            => options.UseSqlite($@"Data Source={Path.Combine(ContentManager.rootDirPath, "database.db")}");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

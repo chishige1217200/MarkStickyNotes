@@ -45,10 +45,9 @@ namespace MarkStickyNotes
             await webView.EnsureCoreWebView2Async(null);
 
             // contentsフォルダを仮想ホスト名にマッピング
-            var contentsDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "contents");
             webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
                 "markstickynotesapp.local",
-                contentsDirPath,
+                ContentManager.contentsDirPath,
                 Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
 
             // NavigationStartingイベントを登録（ファイルリンクを外部アプリで開く）
@@ -720,9 +719,8 @@ namespace MarkStickyNotes
             try
             {
                 // 仮想ホストのパスを実際のファイルパスに変換
-                var contentsDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "contents");
                 var relativePath = uri.LocalPath.TrimStart('/');
-                var actualFilePath = Path.Combine(contentsDirPath, relativePath);
+                var actualFilePath = Path.Combine(ContentManager.contentsDirPath, relativePath);
 
                 if (File.Exists(actualFilePath))
                 {

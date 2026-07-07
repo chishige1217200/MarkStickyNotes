@@ -6,7 +6,11 @@ namespace MarkStickyNotes
 {
     public class ContentManager
     {
-        static readonly string contentsDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "contents");
+        public static readonly string rootDirPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "chishige1217200",
+            "MarkStickyNotes");
+        public static readonly string contentsDirPath = Path.Combine(rootDirPath, "contents");
 
         /// <summary>
         /// 初期化処理
