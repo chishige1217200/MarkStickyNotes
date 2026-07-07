@@ -74,7 +74,7 @@ namespace MarkStickyNotes
             versionLabel.Name = "versionLabel";
             versionLabel.Size = new Size(78, 15);
             versionLabel.TabIndex = 2;
-            versionLabel.Text = "バージョン 1.0.2";
+            versionLabel.Text = "バージョン 1.0.3";
             // 
             // copyrightLabel
             // 
