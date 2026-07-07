@@ -48,7 +48,7 @@ namespace MarkStickyNotes
                 Visible = true
             };
 
-            _notifyIcon.Click += (_, _) => ShowList();
+            _notifyIcon.MouseClick += notifyIcon_Click;
 
             ShowList();
         }
@@ -151,6 +151,16 @@ namespace MarkStickyNotes
             }
 
             base.Dispose(disposing);
+        }
+
+        private void notifyIcon_Click(object? sender,
+             System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                // 左クリックで付箋一覧を表示
+                ShowList();
+            }
         }
     }
 }
