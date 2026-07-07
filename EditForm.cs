@@ -45,10 +45,9 @@ namespace MarkStickyNotes
             await webView.EnsureCoreWebView2Async(null);
 
             // contentsフォルダを仮想ホスト名にマッピング
-            var contentsDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "contents");
             webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
                 "markstickynotesapp.local",
-                contentsDirPath,
+                ContentManager.contentsDirPath,
                 Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
 
             // NavigationStartingイベントを登録（ファイルリンクを外部アプリで開く）
@@ -594,7 +593,7 @@ namespace MarkStickyNotes
         }
 
         // 件名の入力状態をチェックして保存ボタンの有効/無効を切り替え
-        private void TitleTextBox_TextChanged(object sender, EventArgs e)
+        private void TitleTextBox_TextChanged(object? sender, EventArgs e)
         {
             if (isEditMode)
             {
@@ -610,7 +609,7 @@ namespace MarkStickyNotes
         }
 
         // ドラッグ開始イベント
-        private void MarkdownRichTextBox_DragEnter(object sender, DragEventArgs e)
+        private void MarkdownRichTextBox_DragEnter(object? sender, DragEventArgs e)
         {
             // ファイルがドラッグされている場合のみ許可
             if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
@@ -624,7 +623,7 @@ namespace MarkStickyNotes
         }
 
         // ドロップイベント
-        private void MarkdownRichTextBox_DragDrop(object sender, DragEventArgs e)
+        private void MarkdownRichTextBox_DragDrop(object? sender, DragEventArgs e)
         {
             // 編集モードでない場合は処理しない
             if (!isEditMode)
@@ -720,9 +719,8 @@ namespace MarkStickyNotes
             try
             {
                 // 仮想ホストのパスを実際のファイルパスに変換
-                var contentsDirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "contents");
                 var relativePath = uri.LocalPath.TrimStart('/');
-                var actualFilePath = Path.Combine(contentsDirPath, relativePath);
+                var actualFilePath = Path.Combine(ContentManager.contentsDirPath, relativePath);
 
                 if (File.Exists(actualFilePath))
                 {

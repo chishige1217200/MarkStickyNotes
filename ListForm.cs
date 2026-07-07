@@ -1,7 +1,9 @@
 using MarkStickyNotes.DbContexts;
 using MarkStickyNotes.Entities;
+using MarkStickyNotes.Models;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
+using System.Text.Json;
 
 namespace MarkStickyNotes
 {
@@ -10,6 +12,15 @@ namespace MarkStickyNotes
         private BindingList<NoteSearchResult>? currentResults;
         private string currentSortColumn = "Updated";
         private ListSortDirection currentSortDirection = ListSortDirection.Descending;
+
+        // 検索条件の保存先パス
+        private static readonly string SearchConditionsFilePath =
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "chishige1217200",
+                "MarkStickyNotes",
+                "SearchConditions.json"
+            );
 
         public ListForm()
         {
@@ -26,6 +37,7 @@ namespace MarkStickyNotes
             LoadCategoryData();
             LoadPriorityData();
             InitializeDataGridView();
+            RestoreSearchConditions(); // 検索条件を復元
             PerformSearch(); // 初期表示時に全件検索
         }
 
@@ -318,7 +330,7 @@ namespace MarkStickyNotes
         }
 
         // 列ヘッダークリックでソート
-        private void ResultsDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void ResultsDataGridView_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
         {
             if (currentResults == null || currentResults.Count == 0) return;
 
@@ -534,6 +546,9 @@ namespace MarkStickyNotes
                     ? SortOrder.Ascending
                     : SortOrder.Descending;
             }
+
+            // 検索条件を保存
+            SaveSearchConditions();
         }
 
         // DataGridView のセルダブルクリックイベント
@@ -577,6 +592,195 @@ namespace MarkStickyNotes
             {
                 // Ctrl + N で新規付箋作成
                 ShowNote();
+            }
+        }
+
+        /// <summary>
+        /// 現在の検索条件をJSONファイルに保存
+        /// </summary>
+        private void SaveSearchConditions()
+        {
+            try
+            {
+                var conditions = new SearchConditions
+                {
+                    TitleSearch = titleSearchTextBox.Text,
+                    SelectedIssueTypeIds = issueTypeCheckedListBox.CheckedItems.Cast<IssueType>().Select(i => i.Id).ToList(),
+                    SelectedAssigneeIds = assigneeCheckedListBox.CheckedItems.Cast<Assignee>().Select(a => a.Id).ToList(),
+                    SelectedStatusIds = statusCheckedListBox.CheckedItems.Cast<Status>().Select(s => s.Id).ToList(),
+                    SelectedCategoryIds = categoryCheckedListBox.CheckedItems.Cast<Category>().Select(c => c.Id).ToList(),
+                    SelectedPriorityIds = priorityCheckedListBox.CheckedItems.Cast<Priority>().Select(p => p.Id).ToList(),
+                    StartDateFrom = startDateFromPicker.Checked ? startDateFromPicker.Value.Date : null,
+                    StartDateFromEnabled = startDateFromPicker.Checked,
+                    StartDateTo = startDateToPicker.Checked ? startDateToPicker.Value.Date : null,
+                    StartDateToEnabled = startDateToPicker.Checked,
+                    DueDateFrom = dueDateFromPicker.Checked ? dueDateFromPicker.Value.Date : null,
+                    DueDateFromEnabled = dueDateFromPicker.Checked,
+                    DueDateTo = dueDateToPicker.Checked ? dueDateToPicker.Value.Date : null,
+                    DueDateToEnabled = dueDateToPicker.Checked,
+                    UpdatedDateFrom = updatedDateFromPicker.Checked ? updatedDateFromPicker.Value.Date : null,
+                    UpdatedDateFromEnabled = updatedDateFromPicker.Checked,
+                    UpdatedDateTo = updatedDateToPicker.Checked ? updatedDateToPicker.Value.Date : null,
+                    UpdatedDateToEnabled = updatedDateToPicker.Checked,
+                    SortColumn = currentSortColumn,
+                    SortDirection = (int)currentSortDirection
+                };
+
+                // ディレクトリが存在しない場合は作成
+                var directory = Path.GetDirectoryName(SearchConditionsFilePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                // JSONファイルに保存
+                var json = JsonSerializer.Serialize(conditions, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(SearchConditionsFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                // エラーが発生しても検索処理は継続するため、ログ出力のみ
+                System.Diagnostics.Debug.WriteLine($"検索条件の保存に失敗: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// JSONファイルから検索条件を復元
+        /// </summary>
+        private void RestoreSearchConditions()
+        {
+            try
+            {
+                // ファイルが存在しない場合は何もしない
+                if (!File.Exists(SearchConditionsFilePath))
+                {
+                    return;
+                }
+
+                // JSONファイルから読み込み
+                var json = File.ReadAllText(SearchConditionsFilePath);
+                var conditions = JsonSerializer.Deserialize<SearchConditions>(json);
+
+                if (conditions == null)
+                {
+                    return;
+                }
+
+                // 件名
+                titleSearchTextBox.Text = conditions.TitleSearch;
+
+                // 種別の復元
+                for (int i = 0; i < issueTypeCheckedListBox.Items.Count; i++)
+                {
+                    var item = (IssueType)issueTypeCheckedListBox.Items[i];
+                    issueTypeCheckedListBox.SetItemChecked(i, conditions.SelectedIssueTypeIds.Contains(item.Id));
+                }
+
+                // 担当者の復元
+                for (int i = 0; i < assigneeCheckedListBox.Items.Count; i++)
+                {
+                    var item = (Assignee)assigneeCheckedListBox.Items[i];
+                    assigneeCheckedListBox.SetItemChecked(i, conditions.SelectedAssigneeIds.Contains(item.Id));
+                }
+
+                // 状態の復元
+                for (int i = 0; i < statusCheckedListBox.Items.Count; i++)
+                {
+                    var item = (Status)statusCheckedListBox.Items[i];
+                    statusCheckedListBox.SetItemChecked(i, conditions.SelectedStatusIds.Contains(item.Id));
+                }
+
+                // カテゴリの復元
+                for (int i = 0; i < categoryCheckedListBox.Items.Count; i++)
+                {
+                    var item = (Category)categoryCheckedListBox.Items[i];
+                    categoryCheckedListBox.SetItemChecked(i, conditions.SelectedCategoryIds.Contains(item.Id));
+                }
+
+                // 優先度の復元
+                for (int i = 0; i < priorityCheckedListBox.Items.Count; i++)
+                {
+                    var item = (Priority)priorityCheckedListBox.Items[i];
+                    priorityCheckedListBox.SetItemChecked(i, conditions.SelectedPriorityIds.Contains(item.Id));
+                }
+
+                // 開始日Fromの復元
+                if (conditions.StartDateFromEnabled && conditions.StartDateFrom.HasValue)
+                {
+                    startDateFromPicker.Value = conditions.StartDateFrom.Value;
+                    startDateFromPicker.Checked = true;
+                }
+                else
+                {
+                    startDateFromPicker.Checked = false;
+                }
+
+                // 開始日Toの復元
+                if (conditions.StartDateToEnabled && conditions.StartDateTo.HasValue)
+                {
+                    startDateToPicker.Value = conditions.StartDateTo.Value;
+                    startDateToPicker.Checked = true;
+                }
+                else
+                {
+                    startDateToPicker.Checked = false;
+                }
+
+                // 期限日Fromの復元
+                if (conditions.DueDateFromEnabled && conditions.DueDateFrom.HasValue)
+                {
+                    dueDateFromPicker.Value = conditions.DueDateFrom.Value;
+                    dueDateFromPicker.Checked = true;
+                }
+                else
+                {
+                    dueDateFromPicker.Checked = false;
+                }
+
+                // 期限日Toの復元
+                if (conditions.DueDateToEnabled && conditions.DueDateTo.HasValue)
+                {
+                    dueDateToPicker.Value = conditions.DueDateTo.Value;
+                    dueDateToPicker.Checked = true;
+                }
+                else
+                {
+                    dueDateToPicker.Checked = false;
+                }
+
+                // 更新日時Fromの復元
+                if (conditions.UpdatedDateFromEnabled && conditions.UpdatedDateFrom.HasValue)
+                {
+                    updatedDateFromPicker.Value = conditions.UpdatedDateFrom.Value;
+                    updatedDateFromPicker.Checked = true;
+                }
+                else
+                {
+                    updatedDateFromPicker.Checked = false;
+                }
+
+                // 更新日時Toの復元
+                if (conditions.UpdatedDateToEnabled && conditions.UpdatedDateTo.HasValue)
+                {
+                    updatedDateToPicker.Value = conditions.UpdatedDateTo.Value;
+                    updatedDateToPicker.Checked = true;
+                }
+                else
+                {
+                    updatedDateToPicker.Checked = false;
+                }
+
+                // ソート順の復元
+                if (!string.IsNullOrEmpty(conditions.SortColumn))
+                {
+                    currentSortColumn = conditions.SortColumn;
+                    currentSortDirection = (ListSortDirection)conditions.SortDirection;
+                }
+            }
+            catch (Exception ex)
+            {
+                // エラーが発生しても初期表示は継続するため、ログ出力のみ
+                System.Diagnostics.Debug.WriteLine($"検索条件の復元に失敗: {ex.Message}");
             }
         }
     }
