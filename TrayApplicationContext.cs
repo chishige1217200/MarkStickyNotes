@@ -91,6 +91,16 @@ namespace MarkStickyNotes
                 {
                     _settingsForm = null;
                 };
+
+                // 設定変更イベントを購読
+                _settingsForm.SettingsChanged += (_, _) =>
+                {
+                    // ListFormが開かれている場合、検索条件リストを更新
+                    if (_listForm != null && !_listForm.IsDisposed)
+                    {
+                        _listForm.RefreshSearchConditionLists();
+                    }
+                };
             }
 
             if (!_settingsForm.Visible)
