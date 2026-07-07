@@ -48,7 +48,7 @@ namespace MarkStickyNotes
                 Visible = true
             };
 
-            _notifyIcon.DoubleClick += (_, _) => ShowList();
+            _notifyIcon.Click += (_, _) => ShowList();
 
             ShowList();
         }
