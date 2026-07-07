@@ -27,7 +27,7 @@ namespace MarkStickyNotes
             statusEditor.Initialize<Status>("状態");
             issueTypeEditor.Initialize<IssueType>("種別");
             assigneeEditor.Initialize<Assignee>("担当者");
-            categoryEditor.Initialize<Category>("カテゴリー");
+            categoryEditor.Initialize<Category>("カテゴリ");
             priorityEditor.Initialize<Priority>("優先度");
 
             // 各エディターのデータ変更イベントを購読

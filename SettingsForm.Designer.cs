@@ -124,7 +124,7 @@
             categoryTabPage.Padding = new Padding(3);
             categoryTabPage.Size = new Size(420, 366);
             categoryTabPage.TabIndex = 3;
-            categoryTabPage.Text = "カテゴリー";
+            categoryTabPage.Text = "カテゴリ";
             categoryTabPage.UseVisualStyleBackColor = true;
             // 
             // categoryEditor
