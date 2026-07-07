@@ -354,11 +354,9 @@ namespace MarkStickyNotes
         // 検索結果をソート
         private void SortResults()
         {
-            if (currentResults == null || currentResults.Count == 0) return;
-
             List<NoteSearchResult> sortedList = currentSortDirection == ListSortDirection.Ascending
-                ? SortAscending(currentResults.ToList(), currentSortColumn)
-                : SortDescending(currentResults.ToList(), currentSortColumn);
+                ? SortAscending((currentResults ?? new BindingList<NoteSearchResult>()).ToList(), currentSortColumn)
+                : SortDescending((currentResults ?? new BindingList<NoteSearchResult>()).ToList(), currentSortColumn);
 
             currentResults = new BindingList<NoteSearchResult>(sortedList);
             resultsDataGridView.DataSource = currentResults;
