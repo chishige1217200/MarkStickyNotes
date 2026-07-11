@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using MarkStickyNotes.DbContexts;
 using MarkStickyNotes.Entities;
 using Markdig;
+using NLog;
 
 namespace MarkStickyNotes
 {
     public partial class EditForm : Form
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private bool isEditMode = false;
         private Note? currentNote = null;
         private bool isNewNote = true; // 新規作成フラグ
@@ -25,6 +28,7 @@ namespace MarkStickyNotes
 
         public EditForm()
         {
+            Logger.Debug("EditForm コンストラクタ開始");
             InitializeComponent();
             LoadComboBoxData();
             InitializeWebView();
@@ -46,6 +50,7 @@ namespace MarkStickyNotes
         // WebView2の初期化
         private async void InitializeWebView()
         {
+            Logger.Debug("WebView2初期化開始");
             await webView.EnsureCoreWebView2Async(null);
 
             // contentsフォルダを仮想ホスト名にマッピング
@@ -54,16 +59,20 @@ namespace MarkStickyNotes
                 ContentManager.contentsDirPath,
                 Microsoft.Web.WebView2.Core.CoreWebView2HostResourceAccessKind.Allow);
 
+            Logger.Debug("WebView2初期化完了");
+
             // NavigationStartingイベントを登録（ファイルリンクを外部アプリで開く）
             webView.CoreWebView2.NavigationStarting += CoreWebView2_NavigationStarting;
 
             // 新規作成の場合は編集モードで起動
             if (isNewNote)
             {
+                Logger.Debug("新規付箋モード");
                 CreateNewNote();
             }
             else
             {
+                Logger.Debug($"既存付箋モード (ID: {currentNote?.Id ?? 0})");
                 // 既存付箋の場合、初期化完了後にレンダリング
                 if (!isEditMode)
                 {
@@ -161,10 +170,12 @@ namespace MarkStickyNotes
         // 既存の付箋を読み込む
         public void LoadNote(int noteId)
         {
+            Logger.Info($"付箋読み込み開始 (ID: {noteId})");
             using var db = new AppDbContext();
             currentNote = db.Notes.FirstOrDefault(n => n.Id == noteId && !n.IsDeleted);
             if (currentNote != null)
             {
+                Logger.Info($"付箋読み込み完了 (ID: {noteId}, 件名: {currentNote.Subject})");
                 Text += $" - id: {noteId}"; // フォーム件名を変更
                 titleTextBox.Text = currentNote.Subject;
 
@@ -235,6 +246,7 @@ namespace MarkStickyNotes
             }
             else
             {
+                Logger.Warn($"付箋が見つかりません (ID: {noteId}) - 新規作成に切り替え");
                 // 付箋が見つからない場合は新規作成
                 CreateNewNote();
             }
@@ -243,6 +255,7 @@ namespace MarkStickyNotes
         // 新規付箋を作成
         public void CreateNewNote()
         {
+            Logger.Info("新規付箋作成");
             currentNote = new Note
             {
                 Subject = "",
@@ -280,16 +293,19 @@ namespace MarkStickyNotes
         // 編集/閲覧モードの切り替え
         private void EditButton_Click(object sender, EventArgs e)
         {
+            Logger.Info($"編集ボタンクリック (現在のモード: {(isEditMode ? "編集" : "閲覧")})");
             if (isEditMode)
             {
                 // 編集モードから閲覧モードへ(保存)
                 SaveNote();
                 SetViewMode(false);
+                Logger.Info("閲覧モードに切り替え（保存済み）");
             }
             else
             {
                 // 閲覧モードから編集モードへ
                 SetViewMode(true);
+                Logger.Info("編集モードに切り替え");
             }
         }
 
@@ -300,6 +316,7 @@ namespace MarkStickyNotes
 
             if (editMode)
             {
+                Logger.Debug("編集モード設定");
                 // 編集モード
                 editButton.Text = "保存";
                 titleTextBox.ReadOnly = false;
@@ -321,6 +338,7 @@ namespace MarkStickyNotes
             }
             else
             {
+                Logger.Debug("閲覧モード設定");
                 // 閲覧モード
                 editButton.Text = "編集";
                 titleTextBox.ReadOnly = true;
@@ -351,6 +369,7 @@ namespace MarkStickyNotes
                 return;
             }
 
+            Logger.Debug("Markdownレンダリング開始");
             var markdown = markdownRichTextBox.Text;
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             var html = Markdown.ToHtml(markdown, pipeline);
@@ -458,6 +477,7 @@ namespace MarkStickyNotes
 </html>";
 
             webView.NavigateToString(fullHtml);
+            Logger.Debug("Markdownレンダリング完了");
         }
 
         // 付箋を保存
@@ -465,6 +485,7 @@ namespace MarkStickyNotes
         {
             if (currentNote == null) return;
 
+            Logger.Info($"付箋保存開始 (ID: {currentNote.Id}, 件名: {currentNote.Subject})");
             using var db = new AppDbContext();
 
             // 件名を更新
@@ -508,6 +529,7 @@ namespace MarkStickyNotes
             }
 
             db.SaveChanges();
+            Logger.Info($"付箋保存完了 (ID: {currentNote.Id})");
         }
 
         //マウスのクリック位置を記憶
@@ -540,6 +562,7 @@ namespace MarkStickyNotes
         {
             if (colorComboBox.SelectedItem is Entities.Color selectedColor)
             {
+                Logger.Debug($"カラー変更: {selectedColor.Name} ({selectedColor.ColorCode})");
                 try
                 {
                     this.BackColor = ColorTranslator.FromHtml(selectedColor.ColorCode);
@@ -570,11 +593,13 @@ namespace MarkStickyNotes
 
             if (result != DialogResult.Yes)
             {
+                Logger.Info($"付箋削除キャンセル (ID: {currentNote.Id})");
                 return;
             }
 
             try
             {
+                Logger.Info($"付箋削除実行 (ID: {currentNote.Id}, 件名: {currentNote.Subject})");
                 using var db = new AppDbContext();
 
                 // データベースで論理削除フラグを立てる
@@ -588,10 +613,12 @@ namespace MarkStickyNotes
                 }
 
                 // フォームを閉じる
+                Logger.Info($"付箋削除完了 (ID: {currentNote.Id})");
                 this.Close();
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, $"付箋削除エラー (ID: {currentNote.Id})");
                 MessageBox.Show($"削除中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -599,6 +626,10 @@ namespace MarkStickyNotes
         // 件名の入力状態をチェックして保存ボタンの有効/無効を切り替え
         private void TitleTextBox_TextChanged(object? sender, EventArgs e)
         {
+            if (isEditMode && !string.IsNullOrWhiteSpace(titleTextBox.Text))
+            {
+                Logger.Debug($"件名入力中: {titleTextBox.Text}");
+            }
             if (isEditMode)
             {
                 UpdateSaveButtonState();
@@ -618,6 +649,7 @@ namespace MarkStickyNotes
             // ファイルがドラッグされている場合のみ許可
             if (e.Data?.GetDataPresent(DataFormats.FileDrop) == true)
             {
+                Logger.Debug("ドラッグ&ドロップ許可");
                 e.Effect = DragDropEffects.Copy;
             }
             else
@@ -632,6 +664,7 @@ namespace MarkStickyNotes
             // 編集モードでない場合は処理しない
             if (!isEditMode)
             {
+                Logger.Debug("ドラッグ&ドロップ拒否（編集モード以外）");
                 MessageBox.Show("編集モードでドラッグ&ドロップしてください。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
@@ -639,12 +672,14 @@ namespace MarkStickyNotes
             // 付箋が保存されていない場合は先に保存
             if (currentNote == null || string.IsNullOrEmpty(currentNote.ContentFileName))
             {
+                Logger.Debug("ドラッグ&ドロップ拒否（付箋未保存）");
                 MessageBox.Show("ファイルを添付する前に付箋を一度保存してください。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             if (e.Data?.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
             {
+                Logger.Info($"ファイルドロップ検知 ({files.Length}個のファイル)");
                 var insertTexts = new List<string>();
 
                 foreach (var filePath in files)
@@ -680,6 +715,7 @@ namespace MarkStickyNotes
                     }
                     catch (Exception ex)
                     {
+                        Logger.Error(ex, $"ファイル処理エラー: {filePath}");
                         MessageBox.Show($"ファイルの処理中にエラーが発生しました: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
@@ -687,6 +723,7 @@ namespace MarkStickyNotes
                 // カーソル位置にMarkdownリンクを挿入
                 if (insertTexts.Count > 0)
                 {
+                    Logger.Info($"{insertTexts.Count}個のファイルを添付");
                     var insertText = string.Join("\n", insertTexts);
                     var selectionStart = markdownRichTextBox.SelectionStart;
                     markdownRichTextBox.Text = markdownRichTextBox.Text.Insert(selectionStart, insertText);
@@ -750,6 +787,7 @@ namespace MarkStickyNotes
         {
             if (e.KeyCode == Keys.F2)
             {
+                Logger.Debug("F2キー押下（編集モード切り替え）");
                 if (!isEditMode)
                 {
                     // 閲覧モードでF2キーが押された場合は編集モードに切り替え
@@ -758,6 +796,7 @@ namespace MarkStickyNotes
             }
             if (e.KeyCode == Keys.Escape)
             {
+                Logger.Debug("Escキー押下（フォーム閉じる）");
                 if (!isEditMode)
                 {
                     // 閲覧モードでEscキーが押された場合はフォームを閉じる
@@ -766,6 +805,7 @@ namespace MarkStickyNotes
             }
             if (e.Control && e.KeyCode == Keys.S)
             {
+                Logger.Debug("Ctrl+Sキー押下（保存）");
                 if (isEditMode)
                 {
                     // 編集モードでCtrl+Sが押された場合は保存
@@ -773,6 +813,12 @@ namespace MarkStickyNotes
                     SetViewMode(false);
                 }
             }
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            Logger.Info($"EditForm閉じる (ID: {currentNote?.Id ?? 0})");
+            base.OnFormClosed(e);
         }
     }
 }

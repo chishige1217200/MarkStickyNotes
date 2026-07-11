@@ -2,6 +2,7 @@ using MarkStickyNotes.DbContexts;
 using MarkStickyNotes.Entities;
 using MarkStickyNotes.Models;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using System.ComponentModel;
 using System.Text.Json;
 
@@ -9,6 +10,8 @@ namespace MarkStickyNotes
 {
     public partial class ListForm : Form
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private BindingList<NoteSearchResult>? currentResults;
         private string currentSortColumn = "Updated";
         private ListSortDirection currentSortDirection = ListSortDirection.Descending;
@@ -31,6 +34,7 @@ namespace MarkStickyNotes
 
         private void ListForm_Load(object sender, EventArgs e)
         {
+            Logger.Info("ListForm読み込み開始");
             LoadIssueTypeData();
             LoadAssigneeData();
             LoadStatusData();
@@ -39,6 +43,7 @@ namespace MarkStickyNotes
             InitializeDataGridView();
             RestoreSearchConditions(); // 検索条件を復元
             PerformSearch(); // 初期表示時に全件検索
+            Logger.Info("ListForm読み込み完了");
         }
 
         // 検索結果表示用のクラス
@@ -336,6 +341,7 @@ namespace MarkStickyNotes
 
             var column = resultsDataGridView.Columns[e.ColumnIndex];
             var columnName = column.DataPropertyName;
+            Logger.Info($"ソート実行: 列={columnName}, 方向={currentSortDirection}");
 
             // 同じ列をクリックした場合は昇順/降順を切り替え
             if (currentSortColumn == columnName)
@@ -415,12 +421,14 @@ namespace MarkStickyNotes
         // 検索ボタンクリックイベント
         private void SearchButton_Click(object sender, EventArgs e)
         {
+            Logger.Info("検索ボタンクリック");
             PerformSearch();
         }
 
         // 検索を実行
         private void PerformSearch()
         {
+            Logger.Debug("検索実行開始");
             using var db = new AppDbContext();
 
             // クエリの基本部分（削除されていない付箋）
@@ -549,6 +557,7 @@ namespace MarkStickyNotes
 
             // 検索条件を保存
             SaveSearchConditions();
+            Logger.Info($"検索完了: {results.Count}件ヒット");
         }
 
         // DataGridView のセルダブルクリックイベント
@@ -561,6 +570,7 @@ namespace MarkStickyNotes
             var row = resultsDataGridView.Rows[e.RowIndex];
             if (row.Cells["Id"].Value is int noteId)
             {
+                Logger.Info($"付箋ダブルクリック (ID: {noteId}) - EditForm表示");
                 // EditFormを開く
                 var editForm = new EditForm(noteId);
                 editForm.Show();
@@ -570,11 +580,13 @@ namespace MarkStickyNotes
         // 付箋追加ボタンクリックイベント
         private void NewButton_Click(object sender, EventArgs e)
         {
+            Logger.Info("新規付箋追加ボタンクリック");
             ShowNote();
         }
 
         private void ShowNote()
         {
+            Logger.Info("新規付箋フォーム表示");
             // EditFormを開く
             var editForm = new EditForm();
             editForm.Show();
@@ -585,11 +597,13 @@ namespace MarkStickyNotes
         {
             if (e.KeyCode == Keys.Enter)
             {
+                Logger.Debug("Enterキー押下（検索実行）");
                 // Enter キーで検索を実行
                 PerformSearch();
             }
             if (e.Control && e.KeyCode == Keys.N)
             {
+                Logger.Debug("Ctrl+Nキー押下（新規付箋作成）");
                 // Ctrl + N で新規付箋作成
                 ShowNote();
             }
