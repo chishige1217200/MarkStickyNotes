@@ -1,11 +1,14 @@
 ﻿using MarkStickyNotes.Entities;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Color = MarkStickyNotes.Entities.Color;
 
 namespace MarkStickyNotes.DbContexts
 {
     public class AppDbContext : DbContext
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public DbSet<Note> Notes => Set<Note>();
         public DbSet<Color> Colors => Set<Color>();
         public DbSet<IssueType> IssueTypes => Set<IssueType>();
@@ -15,7 +18,11 @@ namespace MarkStickyNotes.DbContexts
         public DbSet<Priority> Priorities => Set<Priority>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($@"Data Source={Path.Combine(ContentManager.rootDirPath, "database.db")}");
+        {
+            var dbPath = Path.Combine(ContentManager.rootDirPath, "database.db");
+            Logger.Debug($"データベース接続: {dbPath}");
+            options.UseSqlite($@"Data Source={dbPath}");
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NLog;
 
 namespace MarkStickyNotes
 {
     public class ContentManager
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public static readonly string rootDirPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "chishige1217200",
@@ -17,10 +20,16 @@ namespace MarkStickyNotes
         /// </summary>
         public static void Init()
         {
+            Logger.Debug("コンテンツマネージャー初期化開始");
             // コンテンツ保存用ディレクトリの作成
             if (!Directory.Exists(contentsDirPath))
             {
                 Directory.CreateDirectory(contentsDirPath);
+                Logger.Info($"コンテンツディレクトリ作成: {contentsDirPath}");
+            }
+            else
+            {
+                Logger.Debug("コンテンツディレクトリは既に存在します");
             }
         }
 
@@ -33,8 +42,10 @@ namespace MarkStickyNotes
             var filePath = Path.Combine(contentsDirPath, fileName + ".md");
             if (File.Exists(filePath))
             {
+                Logger.Debug($"ファイル読込: {fileName}");
                 return File.ReadAllText(filePath);
             }
+            Logger.Debug($"ファイルが存在しません: {fileName}");
             return string.Empty;
         }
 
@@ -61,10 +72,12 @@ namespace MarkStickyNotes
             try
             {
                 File.WriteAllText(filePath, contents);
+                Logger.Debug($"ファイル保存: {fileName}");
                 return fileName;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Error(ex, $"ファイル保存に失敗: {fileName}");
                 throw;
             }
         }

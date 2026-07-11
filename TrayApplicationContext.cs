@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using NLog;
 
 namespace MarkStickyNotes
 {
     public class TrayApplicationContext : ApplicationContext
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly NotifyIcon _notifyIcon;
         private ListForm? _listForm;
         private SettingsForm? _settingsForm;
@@ -23,6 +26,8 @@ namespace MarkStickyNotes
 
         public TrayApplicationContext()
         {
+            Logger.Info("TrayApplicationContext 初期化開始");
+
             var menu = new ContextMenuStrip();
 
             menu.Items.Add(
@@ -60,13 +65,14 @@ namespace MarkStickyNotes
 
             _notifyIcon.MouseClick += notifyIcon_Click;
 
+            Logger.Info("通知領域アイコン初期化完了");
             ShowList();
             RestoreAndOpenNotes();
         }
 
         private void ShowNote()
         {
-            // EditFormを開く
+            Logger.Debug("新規付箋フォーム表示");
             var editForm = new EditForm();
             editForm.FormClosed += EditForm_FormClosed;
             editForm.Show();
@@ -74,6 +80,7 @@ namespace MarkStickyNotes
 
         private void ShowNote(int noteId)
         {
+            Logger.Debug($"既存付箋フォーム表示 (ID: {noteId})");
             var editForm = new EditForm(noteId);
             editForm.FormClosed += EditForm_FormClosed;
             editForm.Show();
@@ -86,6 +93,7 @@ namespace MarkStickyNotes
 
         private void ShowList()
         {
+            Logger.Debug("付箋一覧フォーム表示");
             if (_listForm == null || _listForm.IsDisposed)
             {
                 _listForm = new ListForm();
@@ -108,6 +116,7 @@ namespace MarkStickyNotes
 
         private void ShowSettings()
         {
+            Logger.Debug("アプリ設定フォーム表示");
             if (_settingsForm == null || _settingsForm.IsDisposed)
             {
                 _settingsForm = new SettingsForm();
@@ -120,6 +129,7 @@ namespace MarkStickyNotes
                 // 設定変更イベントを購読
                 _settingsForm.SettingsChanged += (_, _) =>
                 {
+                    Logger.Debug("設定変更イベント受信");
                     // ListFormが開かれている場合、検索条件リストを更新
                     if (_listForm != null && !_listForm.IsDisposed)
                     {
@@ -139,6 +149,7 @@ namespace MarkStickyNotes
 
         private void ShowAbout()
         {
+            Logger.Debug("アプリについてフォーム表示");
             if (_aboutForm == null || _aboutForm.IsDisposed)
             {
                 _aboutForm = new AboutForm();
@@ -160,6 +171,7 @@ namespace MarkStickyNotes
 
         private void ExitApplication()
         {
+            Logger.Info("アプリケーション終了処理開始");
             SaveOpenedNotes();
 
             _notifyIcon.Visible = false;
@@ -167,6 +179,7 @@ namespace MarkStickyNotes
 
             _listForm?.Close();
 
+            Logger.Info("アプリケーション終了処理完了");
             ExitThread();
         }
 
@@ -174,8 +187,10 @@ namespace MarkStickyNotes
         {
             try
             {
+                Logger.Debug("開いていた付箋の復元開始");
                 if (!File.Exists(OpenedNotesFilePath))
                 {
+                    Logger.Debug("開いていた付箋ファイルが存在しません");
                     return;
                 }
 
@@ -184,6 +199,7 @@ namespace MarkStickyNotes
 
                 if (noteIds == null || noteIds.Count == 0)
                 {
+                    Logger.Debug("復元する付箋IDがありません");
                     return;
                 }
 
@@ -191,6 +207,7 @@ namespace MarkStickyNotes
                 using var db = new MarkStickyNotes.DbContexts.AppDbContext();
                 var validIds = db.Notes.Where(n => noteIds.Contains(n.Id) && !n.IsDeleted).Select(n => n.Id).ToList();
 
+                Logger.Info($"{validIds.Count}件の付箋を復元");
                 foreach (var id in validIds)
                 {
                     ShowNote(id);
@@ -198,7 +215,7 @@ namespace MarkStickyNotes
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"付箋の復元に失敗: {ex.Message}");
+                Logger.Error(ex, "付箋の復元に失敗");
             }
         }
 
@@ -231,10 +248,11 @@ namespace MarkStickyNotes
 
                 var json = JsonSerializer.Serialize(openedIds, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(OpenedNotesFilePath, json);
+                Logger.Debug($"{openedIds.Count}件の付箋情報を保存");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"付箋の保存に失敗: {ex.Message}");
+                Logger.Error(ex, "付箋の保存に失敗");
             }
         }
 
