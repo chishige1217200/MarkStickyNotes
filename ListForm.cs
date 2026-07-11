@@ -27,9 +27,24 @@ namespace MarkStickyNotes
 
         public ListForm()
         {
+            Logger.Debug("ListForm コンストラクタ");
             InitializeComponent();
 
             typeof(DataGridView).InvokeMember("DoubleBuffered", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.SetProperty, null, resultsDataGridView, new object[] { true });
+
+            // 検索条件チェックボックスのイベントを登録
+            issueTypeCheckedListBox.ItemCheck += SearchConditionCheckBox_ItemCheck;
+            assigneeCheckedListBox.ItemCheck += SearchConditionCheckBox_ItemCheck;
+            statusCheckedListBox.ItemCheck += SearchConditionCheckBox_ItemCheck;
+            categoryCheckedListBox.ItemCheck += SearchConditionCheckBox_ItemCheck;
+            priorityCheckedListBox.ItemCheck += SearchConditionCheckBox_ItemCheck;
+        }
+
+        // 検索条件チェックボックスのイベントハンドラ
+        private void SearchConditionCheckBox_ItemCheck(object? sender, ItemCheckEventArgs e)
+        {
+            string checkBoxName = sender?.GetType().Name ?? "Unknown";
+            Logger.Debug($"検索条件変更: {checkBoxName}, インデックス={e.Index}, 新しい状態={e.NewValue}");
         }
 
         private void ListForm_Load(object sender, EventArgs e)
@@ -64,6 +79,7 @@ namespace MarkStickyNotes
         // IssueType データを CheckedListBox に読み込む
         private void LoadIssueTypeData()
         {
+            Logger.Debug("種別データ読み込み");
             // 現在の選択状態を保存
             var selectedIds = issueTypeCheckedListBox.CheckedItems.Cast<IssueType>().Select(i => i.Id).ToList();
 
@@ -87,11 +103,13 @@ namespace MarkStickyNotes
                     issueTypeCheckedListBox.SetItemChecked(i, true);
                 }
             }
+            Logger.Debug($"種別データ読み込み完了: {issueTypes.Count}件");
         }
 
         // Assignee データを CheckedListBox に読み込む
         private void LoadAssigneeData()
         {
+            Logger.Debug("担当者データ読み込み");
             // 現在の選択状態を保存
             var selectedIds = assigneeCheckedListBox.CheckedItems.Cast<Assignee>().Select(a => a.Id).ToList();
 
@@ -115,11 +133,13 @@ namespace MarkStickyNotes
                     assigneeCheckedListBox.SetItemChecked(i, true);
                 }
             }
+            Logger.Debug($"担当者データ読み込み完了: {assignees.Count}件");
         }
 
         // Status データを CheckedListBox に読み込む
         private void LoadStatusData()
         {
+            Logger.Debug("状態データ読み込み");
             // 現在の選択状態を保存
             var selectedIds = statusCheckedListBox.CheckedItems.Cast<Status>().Select(s => s.Id).ToList();
 
@@ -143,11 +163,13 @@ namespace MarkStickyNotes
                     statusCheckedListBox.SetItemChecked(i, true);
                 }
             }
+            Logger.Debug($"状態データ読み込み完了: {statuses.Count}件");
         }
 
         // Category データを CheckedListBox に読み込む
         private void LoadCategoryData()
         {
+            Logger.Debug("カテゴリデータ読み込み");
             // 現在の選択状態を保存
             var selectedIds = categoryCheckedListBox.CheckedItems.Cast<Category>().Select(c => c.Id).ToList();
 
@@ -171,11 +193,13 @@ namespace MarkStickyNotes
                     categoryCheckedListBox.SetItemChecked(i, true);
                 }
             }
+            Logger.Debug($"カテゴリデータ読み込み完了: {categories.Count}件");
         }
 
         // Priority データを CheckedListBox に読み込む
         private void LoadPriorityData()
         {
+            Logger.Debug("優先度データ読み込み");
             // 現在の選択状態を保存
             var selectedIds = priorityCheckedListBox.CheckedItems.Cast<Priority>().Select(p => p.Id).ToList();
 
@@ -438,6 +462,7 @@ namespace MarkStickyNotes
             if (!string.IsNullOrWhiteSpace(titleSearchTextBox.Text))
             {
                 var titleKeyword = titleSearchTextBox.Text.Trim();
+                Logger.Debug($"件名検索キーワード: {titleKeyword}");
                 query = query.Where(n => n.Subject.Contains(titleKeyword));
             }
 
@@ -650,11 +675,11 @@ namespace MarkStickyNotes
                 // JSONファイルに保存
                 var json = JsonSerializer.Serialize(conditions, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(SearchConditionsFilePath, json);
+                Logger.Debug("検索条件をJSONファイルに保存");
             }
             catch (Exception ex)
             {
-                // エラーが発生しても検索処理は継続するため、ログ出力のみ
-                System.Diagnostics.Debug.WriteLine($"検索条件の保存に失敗: {ex.Message}");
+                Logger.Error(ex, "検索条件の保存に失敗");
             }
         }
 
@@ -668,6 +693,7 @@ namespace MarkStickyNotes
                 // ファイルが存在しない場合は何もしない
                 if (!File.Exists(SearchConditionsFilePath))
                 {
+                    Logger.Debug("検索条件ファイルなし（初期状態）");
                     return;
                 }
 

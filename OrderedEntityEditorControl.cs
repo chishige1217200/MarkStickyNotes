@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using MarkStickyNotes.DbContexts;
 using MarkStickyNotes.Entities;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 
 namespace MarkStickyNotes
 {
@@ -18,6 +19,7 @@ namespace MarkStickyNotes
     /// </summary>
     public partial class OrderedEntityEditorControl : UserControl
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private Type? _entityType;
         private string _entityDisplayName = string.Empty;
 
@@ -26,6 +28,7 @@ namespace MarkStickyNotes
 
         public OrderedEntityEditorControl()
         {
+            Logger.Debug($"{nameof(OrderedEntityEditorControl)} コンストラクタ");
             InitializeComponent();
         }
 
@@ -34,6 +37,7 @@ namespace MarkStickyNotes
         /// </summary>
         public void Initialize<T>(string displayName) where T : OrderedEntity
         {
+            Logger.Debug($"{_entityDisplayName}エディタ初期化");
             _entityType = typeof(T);
             _entityDisplayName = displayName;
             LoadEntityList();
@@ -56,12 +60,14 @@ namespace MarkStickyNotes
 
             if (dbSetProperty == null)
             {
+                Logger.Warn($"{_entityDisplayName}のDbSetが見つかりません");
                 return;
             }
 
             var dbSet = dbSetProperty.GetValue(db);
             if (dbSet == null)
             {
+                Logger.Warn($"{_entityDisplayName}のDbSetがnullです");
                 return;
             }
 
@@ -77,6 +83,7 @@ namespace MarkStickyNotes
                 entityListBox.Items.Add(entity);
             }
             entityListBox.DisplayMember = "Name";
+            Logger.Debug($"{_entityDisplayName}リスト読み込み: {query.Count}件");
         }
 
         private void AddButton_Click(object sender, EventArgs e)
@@ -137,6 +144,8 @@ namespace MarkStickyNotes
             // データ変更イベントを発火
             DataChanged?.Invoke(this, EventArgs.Empty);
 
+            Logger.Info($"{_entityDisplayName}追加: {newEntity.Name}");
+
             // リストを再読み込み
             LoadEntityList();
 
@@ -172,6 +181,8 @@ namespace MarkStickyNotes
 
                 // データ変更イベントを発火
                 DataChanged?.Invoke(this, EventArgs.Empty);
+
+                Logger.Info($"{_entityDisplayName}編集: {selectedEntity.Name} → {entity.Name}");
 
                 // リストを再読み込み
                 LoadEntityList();
@@ -213,6 +224,8 @@ namespace MarkStickyNotes
 
                 // データ変更イベントを発火
                 DataChanged?.Invoke(this, EventArgs.Empty);
+
+                Logger.Info($"{_entityDisplayName}削除: {selectedEntity.Name}");
 
                 // リストを再読み込み
                 LoadEntityList();

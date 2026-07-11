@@ -36,9 +36,26 @@ namespace MarkStickyNotes
             // 件名の変更を監視
             titleTextBox.TextChanged += TitleTextBox_TextChanged;
 
+            // ComboBoxの選択変更を監視
+            colorComboBox.SelectedIndexChanged += ColorComboBox_SelectedIndexChanged;
+            issueTypeComboBox.SelectedIndexChanged += (s, e) => GenericComboBox_SelectedIndexChanged(sender: s, e: e);
+            assigneeComboBox.SelectedIndexChanged += (s, e) => GenericComboBox_SelectedIndexChanged(sender: s, e: e);
+            statusComboBox.SelectedIndexChanged += (s, e) => GenericComboBox_SelectedIndexChanged(sender: s, e: e);
+            categoryComboBox.SelectedIndexChanged += (s, e) => GenericComboBox_SelectedIndexChanged(sender: s, e: e);
+            priorityComboBox.SelectedIndexChanged += (s, e) => GenericComboBox_SelectedIndexChanged(sender: s, e: e);
+
             // ドラッグ&ドロップイベントハンドラを登録
             markdownRichTextBox.DragEnter += MarkdownRichTextBox_DragEnter;
             markdownRichTextBox.DragDrop += MarkdownRichTextBox_DragDrop;
+        }
+
+        // 汎用ComboBox選択変更イベント
+        private void GenericComboBox_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (sender is ComboBox cb && cb.SelectedItem is OrderedEntity entity)
+            {
+                Logger.Debug($"{cb.Name}変更: {entity.Name}");
+            }
         }
 
         public EditForm(int noteId) : this()
@@ -541,6 +558,7 @@ namespace MarkStickyNotes
             // 件名バー領域でのみドラッグ移動を有効化（最上部40ピクセル）
             if ((e.Button & MouseButtons.Left) == MouseButtons.Left && e.Y < 40)
             {
+                Logger.Debug("フォームドラッグ開始");
                 //位置を記憶する
                 mousePoint = new Point(e.X, e.Y);
             }
@@ -558,7 +576,7 @@ namespace MarkStickyNotes
         }
 
         // Colorが変更されたときにフォームの背景色を変更
-        private void ColorComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void ColorComboBox_SelectedIndexChanged(object? sender, EventArgs e)
         {
             if (colorComboBox.SelectedItem is Entities.Color selectedColor)
             {
@@ -763,6 +781,7 @@ namespace MarkStickyNotes
                 var relativePath = uri.LocalPath.TrimStart('/');
                 var actualFilePath = Path.Combine(ContentManager.contentsDirPath, relativePath);
 
+                Logger.Info($"外部ファイル開く: {actualFilePath}");
                 if (File.Exists(actualFilePath))
                 {
                     // Windowsの規定のアプリでファイルを開く
@@ -774,11 +793,13 @@ namespace MarkStickyNotes
                 }
                 else
                 {
+                    Logger.Warn($"ファイルが存在しません: {actualFilePath}");
                     MessageBox.Show($"ファイルが見つかりません: {actualFilePath}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, $"ファイルを開けませんでした: {uri.LocalPath}");
                 MessageBox.Show($"ファイルを開けませんでした: {ex.Message}", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
