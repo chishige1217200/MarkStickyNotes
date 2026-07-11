@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace MarkStickyNotes
 {
@@ -10,6 +12,14 @@ namespace MarkStickyNotes
         private ListForm? _listForm;
         private SettingsForm? _settingsForm;
         private AboutForm? _aboutForm;
+
+        private static readonly string OpenedNotesFilePath =
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "chishige1217200",
+                "MarkStickyNotes",
+                "OpenedNotes.json"
+            );
 
         public TrayApplicationContext()
         {
@@ -51,13 +61,27 @@ namespace MarkStickyNotes
             _notifyIcon.MouseClick += notifyIcon_Click;
 
             ShowList();
+            RestoreAndOpenNotes();
         }
 
         private void ShowNote()
         {
             // EditFormを開く
             var editForm = new EditForm();
+            editForm.FormClosed += EditForm_FormClosed;
             editForm.Show();
+        }
+
+        private void ShowNote(int noteId)
+        {
+            var editForm = new EditForm(noteId);
+            editForm.FormClosed += EditForm_FormClosed;
+            editForm.Show();
+        }
+
+        private void EditForm_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            SaveOpenedNotes();
         }
 
         private void ShowList()
@@ -68,6 +92,7 @@ namespace MarkStickyNotes
 
                 _listForm.FormClosed += (_, _) =>
                 {
+                    SaveOpenedNotes();
                     _listForm = null;
                 };
             }
@@ -135,12 +160,82 @@ namespace MarkStickyNotes
 
         private void ExitApplication()
         {
+            SaveOpenedNotes();
+
             _notifyIcon.Visible = false;
             _notifyIcon.Dispose();
 
             _listForm?.Close();
 
             ExitThread();
+        }
+
+        private void RestoreAndOpenNotes()
+        {
+            try
+            {
+                if (!File.Exists(OpenedNotesFilePath))
+                {
+                    return;
+                }
+
+                var json = File.ReadAllText(OpenedNotesFilePath);
+                var noteIds = JsonSerializer.Deserialize<List<int>>(json);
+
+                if (noteIds == null || noteIds.Count == 0)
+                {
+                    return;
+                }
+
+                // DBに存在する付箋のみを開く
+                using var db = new MarkStickyNotes.DbContexts.AppDbContext();
+                var validIds = db.Notes.Where(n => noteIds.Contains(n.Id) && !n.IsDeleted).Select(n => n.Id).ToList();
+
+                foreach (var id in validIds)
+                {
+                    ShowNote(id);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"付箋の復元に失敗: {ex.Message}");
+            }
+        }
+
+        private void SaveOpenedNotes()
+        {
+            try
+            {
+                var openedIds = new List<int>();
+
+                // ListForm の DataGridView から開いている付箋IDを取得（ListFormは再表示されるため保存しない）
+
+                // EditForm を探す
+                foreach (var form in Application.OpenForms)
+                {
+                    if (form is EditForm editForm && editForm.CurrentNoteId > 0)
+                    {
+                        if (!openedIds.Contains(editForm.CurrentNoteId))
+                        {
+                            openedIds.Add(editForm.CurrentNoteId);
+                        }
+                    }
+                }
+
+                // ディレクトリが存在しない場合は作成
+                var directory = Path.GetDirectoryName(OpenedNotesFilePath);
+                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+
+                var json = JsonSerializer.Serialize(openedIds, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(OpenedNotesFilePath, json);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"付箋の保存に失敗: {ex.Message}");
+            }
         }
 
         protected override void Dispose(bool disposing)

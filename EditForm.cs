@@ -19,6 +19,10 @@ namespace MarkStickyNotes
         private Note? currentNote = null;
         private bool isNewNote = true; // 新規作成フラグ
 
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int CurrentNoteId => currentNote?.Id ?? 0;
+
         public EditForm()
         {
             InitializeComponent();
